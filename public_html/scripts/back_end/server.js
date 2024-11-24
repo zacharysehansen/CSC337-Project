@@ -1,5 +1,5 @@
 const express = require('express');
-const {User} = require('./models'); 
+const {User} = require('./scripts/back_end/models.js'); 
 const app = express();
 app.use(express.json());
 const PORT = 5000;
@@ -38,7 +38,7 @@ app.post('/user/:username/feed/:fishId', (req, res) => {
                 throw { status: 404, message: 'Fish not found in inventory' };
             }
 
-            if (fish.BeenFed >= 2) {
+            if (fish.beenFed >= 2) {
                 throw { status: 400, message: 'Fish cannot be fed anymore today' };
             }
 
@@ -47,9 +47,9 @@ app.post('/user/:username/feed/:fishId', (req, res) => {
             }
 
             fish.isHungry = false;
-            fish.BeenFed += 1;
+            fish.beenFed += 1;
 
-            if (fish.BeenFed === 2) {
+            if (fish.beenFed === 2) {
                 fish.health = 2 < fish.health+ 1 ? 2 : fish.health+ 1;
             }
 
@@ -76,11 +76,11 @@ app.post('/user/:username/pet/:fishId', (req, res) => {
                 throw { status: 404, message: 'Fish not found in inventory' };
             }
 
-            if (fish.BeenPet) {
+            if (fish.beenPet) {
                 return user.save();
             }
 
-            fish.BeenPet = true;
+            fish.beenPet = true;
             fish.health = 2 < fish.health+ 1 ? 2 : fish.health+ 1;
 
             return user.save();
@@ -112,7 +112,7 @@ async function updateFishHunger() {
     
     for (const user of users) {
         for (const fish of user.inventory) {
-            if (!fish.isHungry && fish.BeenFed < 2) {
+            if (!fish.isHungry && fish.beenFed < 2) {
                 fish.isHungry = true;
             }
         }
@@ -136,8 +136,8 @@ async function resetDailyFishStatus() {
             user.lastAccessed = midnightToday.toISOString();
             
             for (const fish of user.inventory) {
-                fish.BeenFed = 0;
-                fish.BeenPet = false;
+                fish.beenFed = 0;
+                fish.beenPet = false;
                 fish.isHungry = false;
             }
             
