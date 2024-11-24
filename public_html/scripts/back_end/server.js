@@ -3,6 +3,7 @@ const {User} = require('./models');
 const app = express();
 app.use(express.json());
 const PORT = 5000;
+const HOST = '127.0.0.1';
 const HUNGER_TIMER = 15*1000 //everything is multiplied by 1000 to make them miliseconds
 
 
@@ -59,9 +60,7 @@ app.post('/user/:username/feed/:fishId', (req, res) => {
             console.log("Fish fed successfuly")
         })
         .catch(error => {
-            const status = error.status || 500;
-            const message = error.message || error.toString();
-            res.status(status).json({ error: message });
+            res.status(error.status).send(error.toString());
         });
 });
 
@@ -91,9 +90,7 @@ app.post('/user/:username/pet/:fishId', (req, res) => {
             res.json({ fish, message: 'Fish pet successfully' });
         })
         .catch(error => {
-            const status = error.status || 500;
-            const message = error.message || error.toString();
-            res.status(status).json({ error: message });
+            res.status(error.status).send(error.toString());
         });
 });
 
@@ -106,58 +103,46 @@ app.get('/user/:username/fish-status', (req, res) => {
             res.json({ inventory: user.inventory });
         })
         .catch(error => {
-            const status = error.status || 500;
-            const message = error.message || error.toString();
-            res.status(status).json({ error: message });
+            res.status(error.status).send(error.toString());
         });
 });
 
 async function updateFishHunger() {
-    try {
-        const users = await User.find({});
-        
-        for (const user of users) {
-            for (const fish of user.inventory) {
-                if (!fish.isHungry && fish.BeenFed < 2) {
-                    fish.isHungry = true;
-                }
+    const users = await User.find({});
+    
+    for (const user of users) {
+        for (const fish of user.inventory) {
+            if (!fish.isHungry && fish.BeenFed < 2) {
+                fish.isHungry = true;
             }
-            await user.save();
         }
-    } catch (error) {
-        console.error('Error updating fish hunger:', error);
-        throw error;
+        await user.save();
     }
 }
 
 async function resetDailyFishStatus() {
-    try {
-        const currentTime = new Date();
-        const users = await User.find({});
+    const currentTime = new Date();
+    const users = await User.find({});
 
-        for (const user of users) {
-            const lastAccessedDate = new Date(user.lastAccessed);
-            const timeDifference = currentTime - lastAccessedDate;
-            const hoursDifference = timeDifference / (1000 * 60 * 60);
+    for (const user of users) {
+        const lastAccessedDate = new Date(user.lastAccessed);
+        const timeDifference = currentTime - lastAccessedDate;
+        const hoursDifference = timeDifference / (1000 * 60 * 60);
+        
+        if (hoursDifference >= 24) {
+            const midnightToday = new Date(currentTime);
+            midnightToday.setHours(0, 0, 0, 0);
             
-            if (hoursDifference >= 24) {
-                const midnightToday = new Date(currentTime);
-                midnightToday.setHours(0, 0, 0, 0);
-                
-                user.lastAccessed = midnightToday.toISOString();
-                
-                for (const fish of user.inventory) {
-                    fish.BeenFed = 0;
-                    fish.BeenPet = false;
-                    fish.isHungry = false;
-                }
-                
-                await user.save();
+            user.lastAccessed = midnightToday.toISOString();
+            
+            for (const fish of user.inventory) {
+                fish.BeenFed = 0;
+                fish.BeenPet = false;
+                fish.isHungry = false;
             }
+            
+            await user.save();
         }
-    } catch (error) {
-        console.error('Error resetting fish status:', error);
-        throw error;
     }
 }
 
@@ -165,6 +150,6 @@ async function resetDailyFishStatus() {
 setInterval(updateFishHunger, HUNGER_TIMER);
 resetDailyFishStatus();
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`Server running on http://${HOST}:${PORT}`);
 });
