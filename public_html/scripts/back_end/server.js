@@ -1,11 +1,18 @@
 const express = require('express');
-const {User} = require('./scripts/back_end/models.js'); 
+const mongoose = require('mongoose');
+const { User, Fish, Leaderboard } = require('./models');
+
 const app = express();
 app.use(express.json());
+
 const PORT = 5000;
 const HOST = '127.0.0.1';
-const HUNGER_TIMER = 15*1000 //everything is multiplied by 1000 to make them miliseconds
+const HUNGER_TIMER = 15 * 1000; 
 
+const MONGO_URI = 'mongodb://127.0.0.1:27017/fishyKingdom';
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((error) => console.error('MongoDB connection error:', error));
 
 app.post('/user/:username', (req, res) => {
     User.findOne({ username: req.params.username })
@@ -26,6 +33,7 @@ app.post('/user/:username', (req, res) => {
         .catch(error => res.status(500).json({ error: error.message }));
 });
 
+// Feed fish 
 app.post('/user/:username/feed/:fishId', (req, res) => {
     User.findOne({ username: req.params.username })
         .then(user => {
@@ -50,63 +58,16 @@ app.post('/user/:username/feed/:fishId', (req, res) => {
             fish.beenFed += 1;
 
             if (fish.beenFed === 2) {
-                fish.health = 2 < fish.health+ 1 ? 2 : fish.health+ 1;
+                fish.health = 2 < fish.health + 1 ? 2 : fish.health + 1;
             }
 
             return user.save();
         })
-        .then(user => {
-            const fish = user.inventory.find((f) => f.id === req.params.fishId);
-            console.log("Fish fed successfuly")
-        })
-        .catch(error => {
-            res.status(error.status).send(error.toString());
-        });
+        .then(user => res.json({ message: 'Fish fed successfully' }))
+        .catch(error => res.status(error.status || 500).send(error.toString()));
 });
 
-app.post('/user/:username/pet/:fishId', (req, res) => {
-    User.findOne({ username: req.params.username })
-        .then(user => {
-            if (!user) {
-                throw { status: 404, message: 'User not found' };
-            }
-
-            const fish = user.inventory.find(f => f.id === req.params.fishId);
-            if (!fish) {
-                throw { status: 404, message: 'Fish not found in inventory' };
-            }
-
-            if (fish.beenPet) {
-                return user.save();
-            }
-
-            fish.beenPet = true;
-            fish.health = 2 < fish.health+ 1 ? 2 : fish.health+ 1;
-
-            return user.save();
-        })
-        .then(user => {
-            const fish = user.inventory.find(f => f.id === req.params.fishId);
-            res.json({ fish, message: 'Fish pet successfully' });
-        })
-        .catch(error => {
-            res.status(error.status).send(error.toString());
-        });
-});
-
-app.get('/user/:username/fish-status', (req, res) => {
-    User.findOne({ username: req.params.username })
-        .then(user => {
-            if (!user) {
-                throw { status: 404, message: 'User not found' };
-            }
-            res.json({ inventory: user.inventory });
-        })
-        .catch(error => {
-            res.status(error.status).send(error.toString());
-        });
-});
-
+// Update fish hunger 
 async function updateFishHunger() {
     const users = await User.find({});
     
@@ -120,6 +81,7 @@ async function updateFishHunger() {
     }
 }
 
+// Reset fish status daily
 async function resetDailyFishStatus() {
     const currentTime = new Date();
     const users = await User.find({});
@@ -146,7 +108,7 @@ async function resetDailyFishStatus() {
     }
 }
 
-
+//  periodic tasks
 setInterval(updateFishHunger, HUNGER_TIMER);
 resetDailyFishStatus();
 
