@@ -1,6 +1,5 @@
 const express = require('express');
 const {User} = require('./scripts/back_end/models.js'); 
-const mongoose = require('mongoose');
 const app = express();
 app.use(express.json());
 const PORT = 5000;
@@ -146,52 +145,6 @@ async function resetDailyFishStatus() {
         }
     }
 }
-
-const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    lastAccessed: { type: String, required: true },
-    coins: { type: Number, required: true, default: 100 },
-    level: { type: Number, required: true, default: 1 },
-    inventory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Fish' }]
-});
-
-const User = mongoose.model('User', userSchema);
-
-const fishSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    type: { type: String, required: true },
-    health: { type: Number, default: 2 }, // Max health is 2
-    isHungry: { type: Boolean, default: true },
-    beenFed: { type: Number, default: 0 }, // Max is 2 times per day
-    beenPet: { type: Boolean, default: false },
-    accessories: { type: [String], default: [] }
-});
-
-const Fish = mongoose.model('Fish', fishSchema);
-
-const leaderboardSchema = new mongoose.Schema({
-    username: { type: String, required: true },
-    fishValue: { type: Number, required: true }
-});
-
-const Leaderboard = mongoose.model('Leaderboard', leaderboardSchema);
-
-const mongoose = require('mongoose');
-
-const MONGO_URI = 'mongodb://127.0.0.1:27017/fishyKingdom';
-
-mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((error) => console.error('MongoDB connection error:', error));
-
-const User = require('./User');
-const Fish = require('./Fish');
-const Leaderboard = require('./Leaderboard');
-
-module.exports = { User, Fish, Leaderboard };
 
 
 setInterval(updateFishHunger, HUNGER_TIMER);
