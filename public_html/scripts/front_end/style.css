@@ -1,0 +1,46 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #a3d9f7;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+header {
+  text-align: center;
+  background-color: #fff;
+  width: 100%;
+  overflow: hidden;
+}
+
+main {
+}
+
+/* Aquarium background */
+#aquarium {
+  background: url('/imgs/aquarium.jpg') no-repeat center center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Fish container and fish style */
+#fishContainer {
+  position: absolute;
+  padding: 30%;
+  width: 128px;
+}
+
+#startFish {
+  position: absolute;
+  width: 64px; /* aadjust later */
+  transition: transform 5s linear;
+}
+
+#actions button {
+  margin: 0.5em;
+}
+
+footer {
+}
