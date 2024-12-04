@@ -2,7 +2,6 @@ body {
   font-family: Arial, sans-serif;
   background-color: #a3d9f7;
   margin: 0;
-  padding: 0;
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -20,21 +19,30 @@ main {
 
 /* Aquarium background */
 #aquarium {
-  background: url('/imgs/aquarium.jpg') no-repeat center center;
+  margin-left: 100px;
+  background: url('/imgs/aquarium.jpg')
   overflow: hidden;
   position: relative;
 }
 
+#imgDiv {
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+}
+
 /* Fish container and fish style */
 #fishContainer {
+  object-fit
   position: absolute;
-  padding: 30%;
   width: 128px;
 }
 
 #startFish {
   position: absolute;
-  width: 64px; /* aadjust later */
+  width:64px;
   transition: transform 5s linear;
 }
 

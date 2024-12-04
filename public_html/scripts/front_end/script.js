@@ -12,7 +12,7 @@ const fish = {
 const startFish = document.getElementById('startFish');
 
 // Define the aquarium boundaries
-const aquarium = document.getElementById('aquarium');
+const aquarium = document.getElementById('imgDiv');
 const aquariumWidth = aquarium.offsetWidth;
 const aquariumHeight = aquarium.offsetHeight;
 
