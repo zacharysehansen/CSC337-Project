@@ -1,117 +1,210 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const { User, Fish, Leaderboard } = require('./models');
-
+const fs = require('fs').promises;
 const app = express();
 app.use(express.json());
 
 const PORT = 5000;
 const HOST = '127.0.0.1';
-const HUNGER_TIMER = 15 * 1000; 
+const HUNGER_TIMER = 15 * 1000;
+const SAVE_TIMER = 15 * 1000;
+const DATABASE_FILE = './scripts/back_end/database.json';
 
-const MONGO_URI = 'mongodb://127.0.0.1:27017/fishyKingdom';
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((error) => console.error('MongoDB connection error:', error));
+// Initialize storage and add lockMap for user operations
+const storage = {
+    users: new Map(),
+    leaderboard: new Map()
+};
 
+// Create a map to track locks on user operations
+const lockMap = new Map();
+let isShuttingDown = false;
+
+// Add lock management functions
+function acquireLock(userId) {
+    // Check if the user is already locked
+    if (lockMap.get(userId)) {
+        throw { status: 409, message: 'Another operation is in progress for this user' };
+    }
+    // Set the lock with a timestamp for potential timeout functionality
+    lockMap.set(userId, Date.now());
+}
+
+function releaseLock(userId) {
+    lockMap.delete(userId);
+}
+
+// Modify the user route to use locks
 app.post('/user/:username', (req, res) => {
-    User.findOne({ username: req.params.username })
-        .then(user => {
+    const username = req.params.username;
+    
+    try {
+        // Try to acquire the lock before proceeding
+        acquireLock(username);
+        
+        new Promise((resolve) => {
+            let user = storage.users.get(username);
+            
             if (!user) {
-                return User.create({
-                    username: req.params.username,
+                user = {
+                    username: username,
                     lastAccessed: new Date().toISOString(),
                     coins: 100,
                     level: 1,
                     inventory: []
-                });
+                };
+            } else {
+                user.lastAccessed = new Date().toISOString();
             }
-            user.lastAccessed = new Date().toISOString();
-            return user.save();
+            
+            storage.users.set(username, user);
+            resolve(user);
         })
-        .then(user => res.json(user))
-        .catch(error => res.status(500).json({ error: error.message }));
+        .then(user => {
+            releaseLock(username); // Release the lock after operation
+            res.json(user);
+        })
+        .catch(error => {
+            releaseLock(username); // Make sure to release lock even on error
+            res.status(500).json({ error: error.message });
+        });
+    } catch (error) {
+        // Handle lock acquisition failures
+        res.status(error.status || 500).json({ error: error.message });
+    }
 });
 
-// Feed fish 
+// Modify the feed route to use locks
 app.post('/user/:username/feed/:fishId', (req, res) => {
-    User.findOne({ username: req.params.username })
-        .then(user => {
+    const username = req.params.username;
+    
+    try {
+        acquireLock(username);
+        
+        new Promise((resolve) => {
+            const user = storage.users.get(username);
             if (!user) {
                 throw { status: 404, message: 'User not found' };
             }
-
             const fish = user.inventory.find(f => f.id === req.params.fishId);
             if (!fish) {
                 throw { status: 404, message: 'Fish not found in inventory' };
             }
-
             if (fish.beenFed >= 2) {
                 throw { status: 400, message: 'Fish cannot be fed anymore today' };
             }
-
             if (!fish.isHungry) {
                 throw { status: 400, message: 'Fish is not hungry' };
             }
-
             fish.isHungry = false;
             fish.beenFed += 1;
-
             if (fish.beenFed === 2) {
-                fish.health = 2 < fish.health + 1 ? 2 : fish.health + 1;
+                fish.health = Math.min(fish.health + 1, 2);
             }
-
-            return user.save();
+            storage.users.set(username, user);
+            resolve({ message: 'Fish fed successfully' });
         })
-        .then(user => res.json({ message: 'Fish fed successfully' }))
-        .catch(error => res.status(error.status || 500).send(error.toString()));
+        .then(result => {
+            releaseLock(username);
+            res.json(result);
+        })
+        .catch(error => {
+            releaseLock(username);
+            res.status(error.status || 500).json({ error: error.message });
+        });
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
+    }
 });
 
-// Update fish hunger 
-async function updateFishHunger() {
-    const users = await User.find({});
+async function gracefulShutdown() {
+    if (isShuttingDown) {
+        console.log('Shutdown already in progress');
+        return;
+    }
     
-    for (const user of users) {
-        for (const fish of user.inventory) {
-            if (!fish.isHungry && fish.beenFed < 2) {
-                fish.isHungry = true;
-            }
-        }
-        await user.save();
-    }
-}
-
-// Reset fish status daily
-async function resetDailyFishStatus() {
-    const currentTime = new Date();
-    const users = await User.find({});
-
-    for (const user of users) {
-        const lastAccessedDate = new Date(user.lastAccessed);
-        const timeDifference = currentTime - lastAccessedDate;
-        const hoursDifference = timeDifference / (1000 * 60 * 60);
+    isShuttingDown = true;
+    
+    try {
+        // Clear all intervals
+        clearInterval(hungerInterval);
+        clearInterval(saveInterval);
         
-        if (hoursDifference >= 24) {
-            const midnightToday = new Date(currentTime);
-            midnightToday.setHours(0, 0, 0, 0);
-            
-            user.lastAccessed = midnightToday.toISOString();
-            
-            for (const fish of user.inventory) {
-                fish.beenFed = 0;
-                fish.beenPet = false;
-                fish.isHungry = false;
-            }
-            
-            await user.save();
-        }
+        console.log('Saving final data...');
+        await saveToFile();
+        
+        // Release all locks
+        lockMap.clear();
+        
+        console.log('Shutdown complete. Exiting process.');
+        process.exit(0);
+    } catch (error) {
+        console.error('Error during shutdown:', error);
+        process.exit(1);
     }
 }
 
-//  periodic tasks
-setInterval(updateFishHunger, HUNGER_TIMER);
-resetDailyFishStatus();
+app.get('/user/:username/fish-types', (req, res) => {
+    const username = req.params.username;
+    
+    try {
+        acquireLock(username);
+        
+        new Promise((resolve) => {
+            const user = storage.users.get(username);
+            
+            if (!user) {
+                throw { status: 404, message: 'User not found' };
+            }
+            
+            if (!user.inventory || user.inventory.length === 0) {
+                resolve({ 
+                    fishTypes: [],
+                    totalFish: 0
+                });
+                return;
+            }
+            
+            const allFishTypes = user.inventory.map(fish => ({
+                type: fish.type,
+                name: fish.name,
+                health: fish.health,
+                isHungry: fish.isHungry
+            }));
+            
+            const response = {
+                fishTypes: allFishTypes,
+                totalFish: allFishTypes.length
+            };
+            
+            resolve(response);
+        })
+        .then(result => {
+            releaseLock(username);
+            res.json(result);
+        })
+        .catch(error => {
+            releaseLock(username);
+            res.status(error.status || 500).json({ error: error.message });
+        });
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
+    }
+});
 
-app.listen(PORT, HOST, () => {
+// Store interval references so we can clear them during shutdown
+const hungerInterval = setInterval(updateFishHunger, HUNGER_TIMER);
+const saveInterval = setInterval(saveToFile, SAVE_TIMER);
+
+// Start the server
+const server = app.listen(PORT, HOST, () => {
     console.log(`Server running on http://${HOST}:${PORT}`);
+});
+
+// Add server shutdown handling
+process.on('SIGTERM', () => {
+    console.log('Closing HTTP server...');
+    gracefulShutdown();
+    server.close(() => {
+        console.log('HTTP server closed');
+    });
 });

@@ -15,14 +15,27 @@ header {
 }
 
 main {
+  display: grid;
+  place-items: center;
+  /* Adding padding to main ensures minimum spacing from viewport edges */
+  padding: 2rem;
 }
 
-/* Aquarium background */
 #aquarium {
+<<<<<<< HEAD
   margin-left: 17%;
   background: url('/imgs/aquarium.jpg')
   overflow: hidden;
   position: relative;
+=======
+  height: 70vh;
+  width: 50vw;
+  background-image: url('./imgs/aquarium.jpg');
+  /*cover makes it so the image is fit in nicely*/
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+>>>>>>> origin/main
 }
 
 #imgDiv {
