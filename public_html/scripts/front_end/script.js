@@ -24,6 +24,12 @@ const aquarium = document.getElementById('aquarium');
 const aquariumWidth = aquarium.clientWidth;
 const aquariumHeight = aquarium.clientHeight;
 
+// initial direction and reflect each fish if needed
+fishes.forEach(fish => {
+    fish.direction = Math.cos(fish.angle) >= 0 ? -1 : 1;
+    reflectFish(fish); // ensure each fish starts facing the correct direction
+});
+
 // updates the fish position and angle
 function updateFish(fish) {
     // move the fish
