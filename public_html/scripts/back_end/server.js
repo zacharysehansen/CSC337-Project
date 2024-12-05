@@ -9,23 +9,19 @@ const HUNGER_TIMER = 15 * 1000;
 const SAVE_TIMER = 15 * 1000;
 const DATABASE_FILE = './scripts/back_end/database.json';
 
-// Initialize storage and add lockMap for user operations
 const storage = {
     users: new Map(),
     leaderboard: new Map()
 };
 
-// Create a map to track locks on user operations
 const lockMap = new Map();
 let isShuttingDown = false;
 
-// Add lock management functions
+// Add lock management functions to prevent race coditions
 function acquireLock(userId) {
-    // Check if the user is already locked
     if (lockMap.get(userId)) {
         throw { status: 409, message: 'Another operation is in progress for this user' };
     }
-    // Set the lock with a timestamp for potential timeout functionality
     lockMap.set(userId, Date.now());
 }
 
@@ -33,12 +29,10 @@ function releaseLock(userId) {
     lockMap.delete(userId);
 }
 
-// Modify the user route to use locks
 app.post('/user/:username', (req, res) => {
     const username = req.params.username;
     
     try {
-        // Try to acquire the lock before proceeding
         acquireLock(username);
         
         new Promise((resolve) => {
@@ -60,20 +54,18 @@ app.post('/user/:username', (req, res) => {
             resolve(user);
         })
         .then(user => {
-            releaseLock(username); // Release the lock after operation
+            releaseLock(username);
             res.json(user);
         })
         .catch(error => {
-            releaseLock(username); // Make sure to release lock even on error
+            releaseLock(username); 
             res.status(500).json({ error: error.message });
         });
     } catch (error) {
-        // Handle lock acquisition failures
         res.status(error.status || 500).json({ error: error.message });
     }
 });
 
-// Modify the feed route to use locks
 app.post('/user/:username/feed/:fishId', (req, res) => {
     const username = req.params.username;
     
@@ -195,12 +187,11 @@ app.get('/user/:username/fish-types', (req, res) => {
 const hungerInterval = setInterval(updateFishHunger, HUNGER_TIMER);
 const saveInterval = setInterval(saveToFile, SAVE_TIMER);
 
-// Start the server
 const server = app.listen(PORT, HOST, () => {
     console.log(`Server running on http://${HOST}:${PORT}`);
 });
 
-// Add server shutdown handling
+// Add server shutdown handling. SIGTERM is the signal released when shutting down
 process.on('SIGTERM', () => {
     console.log('Closing HTTP server...');
     gracefulShutdown();
