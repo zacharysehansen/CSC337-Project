@@ -1,0 +1,24 @@
+{
+    "users": {
+      "joe": {
+        "username": "joe",
+        "lastAccessed": "2024-12-04T00:00:00.000Z",
+        "coins": 100,
+        "level": 1,
+        "inventory": [
+          {
+            "id": "fish_001",
+            "name": "Bubbles",
+            "type": "startFish",
+            "health": 2,
+            "isHungry": true,
+            "beenFed": 0,
+            "beenPet": false,
+            "accessories": []
+          }
+        ]
+      }
+    },
+    "fish": {},
+    "leaderboard": {}
+  }

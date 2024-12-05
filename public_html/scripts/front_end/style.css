@@ -16,13 +16,20 @@ header {
 }
 
 main {
+  display: grid;
+  place-items: center;
+  /* Adding padding to main ensures minimum spacing from viewport edges */
+  padding: 2rem;
 }
 
-/* Aquarium background */
 #aquarium {
-  background: url('/imgs/aquarium.jpg') no-repeat center center;
-  overflow: hidden;
-  position: relative;
+  height: 70vh;
+  width: 50vw;
+  background-image: url('./imgs/aquarium.jpg');
+  /*cover makes it so the image is fit in nicely*/
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Fish container and fish style */
