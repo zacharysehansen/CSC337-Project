@@ -14,6 +14,7 @@ for (const fishElement of fishElements) {
         height: 64, // Height of the fish element
         speed: 2, // speed can be realy fast 4 fun
         angle: Math.random() * Math.PI * 2, // random initial swim angle
+        direction: 1, // 1 for right, -1 for left
         element: fishElement // store reference to the DOM element
     });
 }
@@ -32,6 +33,8 @@ function updateFish(fish) {
     // Keep the fish within the aquarium boundaries
     if (fish.x < 0 || fish.x > aquariumWidth - fish.width) {
         fish.angle = Math.PI - fish.angle; // reverse horizontal direction
+        fish.direction *= -1;
+        reflectFish(fish); // flip the gif to swim the other way
     }
     if (fish.y < 0 || fish.y > aquariumHeight - fish.height) {
         fish.angle = -fish.angle; // reverse vertical direction
@@ -40,6 +43,15 @@ function updateFish(fish) {
     // apply the updated position to the DOM element
     fish.element.style.left = `${fish.x}px`;
     fish.element.style.top = `${fish.y}px`;
+}
+
+// function to reflect the fish
+function reflectFish(fish) {
+    if (fish.direction === 1) {
+        fish.element.style.transform = 'scaleX(1)';
+    } else {
+        fish.element.style.transform = 'scaleX(-1)';
+    }
 }
 
 // initialize and animate the fish
@@ -54,7 +66,8 @@ fishes.forEach(fish => {
     fish.element.style.position = 'absolute';
     fish.element.style.left = `${fish.x}px`;
     fish.element.style.top = `${fish.y}px`;
+    fish.element.style.transition = 'transform 0.3s';
 });
 
 // start the animation
-animateFish();;
+animateFish();

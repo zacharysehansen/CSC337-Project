@@ -23,6 +23,7 @@ main {
 }
 
 #aquarium {
+  margin-left: 17%;
   height: 70vh;
   width: 50vw;
   background-image: url('./imgs/aquarium.jpg');
