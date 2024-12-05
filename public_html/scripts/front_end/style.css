@@ -1,6 +1,10 @@
+/* this is the style file for the absolutely fish-tastic pocket pond web game. 
+It is responsible for styling the webpage, aka connecting image links, doing the spacing,
+and layout for the main aquarium screen. */
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #a3d9f7;
+  font-family: Arial, sans-serif; /* guys we gotta change this lol */
+  background-color: #a3d9f7; /* and this */
   margin: 0;
   padding: 0;
   align-items: center;
@@ -8,7 +12,10 @@ body {
   overflow: hidden;
 }
 
+/* header is just the white space on top for all the 'stats' (coins, health, buttons, etc) */
 header {
+  padding: 10px;
+  column-count: 3; /* this makes the top part have all the stat stuff in it, header is basically the stat bar */
   text-align: center;
   background-color: #fff;
   width: 100%;
@@ -23,9 +30,10 @@ main {
 }
 
 #aquarium {
+  margin-right: 17%;
   margin-left: 17%;
-  height: 70vh;
-  width: 50vw;
+  height: 80vh;
+  width: 95vw;
   background-image: url('./imgs/aquarium.jpg');
   /*cover makes it so the image is fit in nicely*/
   background-size: cover; 
@@ -48,7 +56,4 @@ main {
 
 #actions button {
   margin: 0.5em;
-}
-
-footer {
 }

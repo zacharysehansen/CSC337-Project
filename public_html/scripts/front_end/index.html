@@ -28,8 +28,18 @@ basically,
             <!-- h1 is a placeholder for what will be a pixel art title, yet to be made. It will be part of the start screen... -->
 
             <!-- this div is for the $$$ -->
-            <div class="coins">
-                <p>Coins: <span id="coinCounter">0</span></p>
+            <div class="stats">
+		<div id="healthBar">
+                    <label>Health:</label>
+                    <progress id="fishHealth" value="2" max="2"></progress>
+		<div id="actions">
+                    <button id="feedButton">Feed</button>
+                    <button id="cuddleButton">Cuddle</button>
+                </div>
+                </div>
+		<p>Coins: <span id="coinCounter">0</span></p>
+		<button id="shopButton">Go to Shop</button>
+                <button id="leaderboardButton">Leaderboard</button>
             </div>
         </header>
 
@@ -43,21 +53,7 @@ basically,
 			<img id="clownFish" src="./imgs/clownFish.gif" alt="cFish" />
 
 		</div>
-
-                <div id="actions">
-                    <button id="feedButton">Feed</button>
-                    <button id="cuddleButton">Cuddle</button>
-                </div>
-
-                <div id="healthBar">
-                    <label>Health:</label>
-                    <progress id="fishHealth" value="2" max="2"></progress>
-                </div>
             </div>
-            <footer>
-                <button id="shopButton">Go to Shop</button>
-                <button id="leaderboardButton">Leaderboard</button>
-            </footer>
         </main>
 
     </div>

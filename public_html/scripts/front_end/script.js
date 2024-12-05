@@ -12,7 +12,7 @@ for (const fishElement of fishElements) {
         y: 100, // start y
         width: 64, // Width of the fish element
         height: 64, // Height of the fish element
-        speed: 2, // speed can be realy fast 4 fun
+        speed: 1, // speed can be realy fast 4 fun
         angle: Math.random() * Math.PI * 2, // random initial swim angle
         direction: 1, // 1 for right, -1 for left
         element: fishElement // store reference to the DOM element
