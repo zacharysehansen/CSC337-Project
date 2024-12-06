@@ -49,9 +49,14 @@ main {
 }
 
 #startFish {
+  cursor: url('./imgs/petHand.png') 16 16, pointer;
   position: absolute;
   width: 64px; /* aadjust later */
   transition: transform 5s linear;
+}
+
+#clownFish {
+  cursor: url('./imgs/petHand.png') 16 16, pointer;
 }
 
 #actions button {
