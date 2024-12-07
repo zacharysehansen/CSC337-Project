@@ -1,60 +1,66 @@
+<!--
+this is the main html portion hehehoooo
+This file (index.html) is for the main structure and flow of the overall program
+basically, 
+
+-->
+
 <!DOCTYPE html>
 <html lang="en">
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- this is a placeholder title, but I really like the use of 'pocket' as it is a web game you can have in your pocket. Lets try to be cute like this guys -->
     <title>Pocket Pond</title>
+
     <link rel="stylesheet" href="style.css">
+
 </head>
+
+
 <body>
+    <!-- The div for the web app itself, id 'app' -->
     <div id="app">
-        <div id="splashScreen">
-            <div id="bubbleBackground"></div>
-            <h1>Pocket Pond</h1>
-            <div class="button-container">
-                <button onclick="showLogin()">Log In</button>
-                <button onclick="showSignUp()">Sign Up</button>
-                <button onclick="showHelp()">Help</button>
+        <header>
+            <!-- h1 is a placeholder for what will be a pixel art title, yet to be made. It will be part of the start screen... -->
+
+            <!-- this div is for the $$$ -->
+            <div class="stats">
+		<div id="healthBar">
+                    <label>Health:</label>
+                    <progress id="fishHealth" value="2" max="2"></progress>
+		<div id="actions">
+                    <button id="feedButton">Feed</button>
+                    <button id="cuddleButton">Cuddle</button>
+                </div>
+                </div>
+		<p>Coins: <span id="coinCounter">0</span></p>
+		<button id="shopButton">Go to Shop</button>
+                <button id="leaderboardButton">Leaderboard</button>
             </div>
-        </div>
+        </header>
 
-<div id="loginModal" class="modal hidden">
-    <div class="modal-content">
-        <h2 id="modalTitle">Log In</h2>
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Enter username" required>
-            <input type="password" id="password" placeholder="Enter password" required>
-            <button type="submit">Submit</button>
-            <button type="button" onclick="closeModal()">Close</button>
-        </form>
-    </div>
-</div>
+        <main>
+            <!-- the 'aquarium' div, for the aquarium screen -->
+            <div id="aquarium">
 
-        <div id="mainApp" class="hidden">
-            <header>
-                <div class="stats">
-                    <div id="healthBar">
-                        <label>Health:</label>
-                        <progress id="fishHealth" value="2" max="2"></progress>
-                    </div>
-                    <p>Coins: <span id="coinCounter">0</span></p>
-                </div>
-                <div class="buttons">
-                    <button id="shopButton">Go to Shop</button>
-                    <button id="leaderboardButton">Leaderboard</button>
-                    <button id="logoutButton" onclick="logout()">Logout</button>
-                </div>
-            </header>
-            <main>
-                <div id="aquarium">
-                    <div id="fishContainer">
-                        <img class="fish" src="./imgs/startFish.gif" alt="Fish">
-                        <img class="fish" src="./imgs/clownFish.gif" alt="Clown Fish">
-                    </div>
-                </div>
-            </main>
-        </div>
+                <div id="fishContainer">
+			<!-- the fish will appear here -->
+			<img id="startFish" src="./imgs/startFish.gif" alt="Fish" />
+			<img id="clownFish" src="./imgs/clownFish.gif" alt="cFish" />
+
+		</div>
+            </div>
+        </main>
+
     </div>
+
     <script src="script.js"></script>
+
 </body>
+
+
 </html>
