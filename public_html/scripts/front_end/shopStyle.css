@@ -1,0 +1,34 @@
+/* Modal styling */
+#shopModal {
+    display: none; /* none or else mermaid russ with haunt you */
+    position: fixed;
+    top: 10%;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000; /* z value so that creepy mermaid appears on top of other elements */
+}
+
+/* ooo Zachary you wanna fix this so bad oooooooo (hypnosis) */
+.modalContent {
+  height: 80vh;
+  width: 30vw;
+  background-image: url('./imgs/shop.png');
+  /*cover makes it so the image is fit in nicely*/
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: slideIn 0.5s ease forwards;
+}
+
+/* GUYS IT CAN SLIDE IN I LOVE W3 SCHOOLS */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%); /* Start off-screen */
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0); /* Slide into view */
+        opacity: 1;
+    }
+}

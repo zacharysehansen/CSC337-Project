@@ -1,3 +1,9 @@
+/*
+This section of the javascript is entirely for getting the fish
+to move around the aquarium box, as well as aniamting their reflection
+when a wall or boundary in the aquarium is hit
+*/
+
 // make fish objects for each fish in the container
 const fishes = [];
 
@@ -67,12 +73,10 @@ function animateFish() {
     requestAnimationFrame(animateFish);
 }
 
-// set the initial position of all fish
+// set the initial position of all fish because i hate everything please i gotta move this to css godddddd
 fishes.forEach(fish => {
-    fish.element.style.position = 'absolute';
     fish.element.style.left = `${fish.x}px`;
     fish.element.style.top = `${fish.y}px`;
-    fish.element.style.transition = 'transform 0.3s';
 });
 
 // start the animation

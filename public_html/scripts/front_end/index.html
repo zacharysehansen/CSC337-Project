@@ -1,7 +1,7 @@
 <!--
 this is the main html portion hehehoooo
 This file (index.html) is for the main structure and flow of the overall program
-basically, 
+basically, error could not load rest of comment will do at not 2am
 -->
 
 <!DOCTYPE html>
@@ -16,6 +16,7 @@ basically,
     <title>Pocket Pond</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="shopStyle.css">
 
 </head>
 
@@ -37,10 +38,20 @@ basically,
                 </div>
                 </div>
 		<p>Coins: <span id="coinCounter">0</span></p>
+		<!-- the shop button opens the modal, a pop up for the shop -->
 		<button id="shopButton">Go to Shop</button>
                 <button id="leaderboardButton">Leaderboard</button>
             </div>
         </header>
+
+	<!-- the modal -->
+	<div id="shopModal">
+
+		<!--  the modal content, aka the shop -->
+        	<div class="modalContent">
+            		<button class="closeButton" id="closeShopButton">&times;</button>
+        	</div>
+    	</div>
 
         <main>
             <!-- the 'aquarium' div, for the aquarium screen -->
@@ -58,8 +69,8 @@ basically,
     </div>
 
     <script src="script.js"></script>
+    <script src="shopScript.js"></script>
 
 </body>
-
 
 </html>
