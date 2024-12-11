@@ -6,7 +6,7 @@ when a wall or boundary in the aquarium is hit
 
 // Set up our API configuration for connecting to the backend. I was 
 // working with port 3000, but you can change it if we want
-const API_BASE_URL = 'http://127.0.0.1:3000';
+const API_BASE_URL = 'http://64.23.229.25:3000';
 
 // Was having a very hard time making the animations play correctly, until I found
 // on Stack Overflow the functions cancelAnimationFrame() and requestAnimationFrame()

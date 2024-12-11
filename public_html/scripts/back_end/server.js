@@ -7,7 +7,7 @@ const app = express();
 // Add CORS middleware that lets use talk with the front end server. Wwe should be able to get rid
 //of this when we move onto the droplet
 app.use(cors({
-    origin: 'http://127.0.0.1:5500',
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500']
 }));
 
 app.use(express.json());
@@ -113,13 +113,13 @@ app.post('/user/:username/feed/:fishId', async (req, res) => {
 // Get fish types route
 app.get('/user/:username/fish-types', async (req, res) => {
     const { username } = req.params;
-    
     try {
         acquireLock(username);
         
         const user = await User.findOne({ username }).populate('inventory');
         
         if (!user) {
+            console.log('this happened');
             throw { status: 404, message: 'User not found' };
         }
         
