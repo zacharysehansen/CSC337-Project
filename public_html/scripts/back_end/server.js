@@ -12,7 +12,7 @@ app.use(cors({
 
 app.use(express.json());
 const PORT = 3000;
-const HOST = '127.0.0.1';
+const HOST = '0.0.0.0';
 const HUNGER_TIMER = 15 * 1000;
 const SAVE_TIMER = 15 * 1000;
 const MONGO_URI = 'mongodb://64.23.229.25:27017/fishtank';
