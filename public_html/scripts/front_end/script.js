@@ -37,6 +37,7 @@ async function loadUserFish() {
         // Create fish elements with random starting positions for each fish in user's inventory
         userData.fishTypes.forEach((fish, index) => {
             const fishElement = document.createElement('img');
+            fishElement.style.cursor = "url('./imgs/petHand.png') 16 16, pointer";
             fishElement.id = `fish_${index}`;
             fishElement.src = `./imgs/${fish.type}.gif`;
             fishElement.alt = fish.name;
