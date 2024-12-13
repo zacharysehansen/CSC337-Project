@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pocket Pond</title>
+        <link rel="stylesheet" href="login.css">
+    </head>
+<body>
+    <div class="page-container">
+        <div class="image-section">
+            <img src="./imgs/mer-russ.png" alt="Background" class="background-image">
+        </div>
+        
+        <div class="right-section">
+            <div class="menu-container">
+                <button class="button login" onclick="showForm('login')">Login</button>
+                <button class="button signup" onclick="showForm('signup')">Sign Up</button>
+                <button class="button help" onclick="showForm('help')">Help</button>
+            </div>
+
+            <form id="loginForm" class="form-container">
+                <button type="button" class="back-button" onclick="goBack()">← Back</button>
+                <input type="username" class="input-field" placeholder="Username" name="username" required>
+                <button type="submit" class="button login">Login</button>
+            </form>
+
+            <form id="signupForm" class="form-container">
+                <button type="button" class="back-button" onclick="goBack()">← Back</button>
+                <input type="text" class="input-field" placeholder="Full Name" name="fullName" required>
+                <input type="email" class="input-field" placeholder="Email" name="email" required>
+                <input type="username" class="input-field" placeholder="Username" name="username" required>
+                <button type="submit" class="button signup">Sign Up</button>
+            </form>
+
+            <div id="helpForm" class="form-container">
+                <button type="button" class="back-button" onclick="goBack()">← Back</button>
+                <h3>Welcome to Pocket Pond!</h3>
+                <div class="help-text">
+                    <p>- Watch your fish swim around</p>
+                    <p>- Click on fish to interact with them</p>
+                    <p>- Earn coins by taking care of your fish</p>
+                    <p>- Visit the shop to buy new fish and decorations</p>
+                    <p>- Keep your fish healthy by feeding them regularly</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

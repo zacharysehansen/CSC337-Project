@@ -1,0 +1,72 @@
+<!--
+this is the main html portion hehehoooo
+This file (index.html) is for the main structure and flow of the overall program
+basically, error could not load rest of comment will do at not 2am
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pocket Pond - Game</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="game.js"></script>
+</head>
+
+
+<body>
+    <!-- The div for the web app itself, id 'app' -->
+    <div id="app">
+        <header>
+            <!-- h1 is a placeholder for what will be a pixel art title, yet to be made. It will be part of the start screen... -->
+
+            <!-- this div is for the $$$ -->
+            <div class="stats">
+		<div id="healthBar">
+            <label>Health:</label>
+            <progress id="fishHealth" value="2" max="2"></progress>
+        </div>
+        <div id="actions">
+            <button id="feedButton">Feed</button>
+            <button id="cuddleButton">Cuddle</button>
+        </div>
+        
+		<p>Coins: <span id="coinCounter">0</span></p>
+		<!-- the shop button opens the modal, a pop up for the shop -->
+		<button id="shopButton">Go to Shop</button>
+                <button id="leaderboardButton">Leaderboard</button>
+            </div>
+        </header>
+
+	<!-- the modal -->
+	<div id="shopModal">
+
+		<!--  the modal content, aka the shop -->
+        	<div class="modalContent">
+            		<button class="closeButton" id="closeShopButton">&times;</button>
+        	</div>
+    	</div>
+
+        <main>
+            <!-- the 'aquarium' div, for the aquarium screen -->
+            <div id="aquarium">
+
+                <div id="fishContainer">
+			<!-- the fish will appear here -->
+			<img id="startFish" src="./imgs/startFish.gif" alt="Fish" />
+			<img id="clownFish" src="./imgs/clownFish.gif" alt="cFish" />
+
+		</div>
+            </div>
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
+<script src="shopScript.js"></script>
+</body>
+
+
+</html>
