@@ -146,6 +146,7 @@ app.get('/user/:username/fish-types', async (req, res) => {
         };
         
         releaseLock(username);
+        console.log("Fish were returned");
         res.json(response);
     } catch (error) {
         releaseLock(username);
@@ -287,30 +288,4 @@ app.post('/signup', async (req, res) => {
             details: error.message,
         });
     }
-});
-
-
-// Serve static files from the front_end directory
-app.use(express.static(path.join(__dirname, '../front_end')));
-
-// Root route to serve index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../front_end/index.html'));
-});
-
-app.use(express.static(path.join(__dirname, '..'))); 
-
-app.get('/game', (req, res) => {
-    console.log('Game request received');
-    const gamePath = path.join(__dirname, '../front_end/game.html');
-    console.log('Attempting to serve:', gamePath);
-    res.sendFile(gamePath, (err) => {
-        if (err) {
-            console.error('Error serving game:', err);
-            res.status(404).send('Game not found');
-        }
-    });
-
-    console.log('Response received:', response);
-
 });
