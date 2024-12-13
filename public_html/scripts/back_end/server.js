@@ -7,7 +7,7 @@ const app = express();
 // Add CORS middleware that lets use talk with the front end server. Wwe should be able to get rid
 //of this when we move onto the droplet
 app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://localhost:5500']
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://64.23.229.25:5500']
 }));
 
 app.use(express.json());
