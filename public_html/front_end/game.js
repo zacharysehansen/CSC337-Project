@@ -24,9 +24,6 @@ if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
 }
 const userData = await response.json(); // Parse response as JSON
-
-
-        
         
         const fishContainer = document.getElementById('fishContainer');
         // this line of code clears existing fish elements
