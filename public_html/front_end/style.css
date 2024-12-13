@@ -4,7 +4,7 @@ and layout for the main aquarium screen. */
 
 body {
   font-family: Arial, sans-serif; /* guys we gotta change this lol */
-  background-color: rgb(159, 214, 243); /* and this */
+  background-color: #a3d9f7; /* and this */
   margin: 0;
   padding: 0;
   align-items: center;
@@ -63,94 +63,4 @@ main {
 
 #actions button {
   margin: 0.5em;
-  color: rgb(255, 0, 0);
-}
-
-/* Add to your shopStyle.css - using the same modal styling as your shop */
-.leaderboard-entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  margin: 10px 0;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: white;
-}
-
-.leaderboard-entry.first {
-  background: rgba(255, 215, 0, 0.2);
-  transform: scale(1.05);
-}
-
-.leaderboard-entry.second {
-  background: rgba(192, 192, 192, 0.2);
-  transform: scale(1.02);
-}
-
-.leaderboard-entry.third {
-  background: rgba(205, 127, 50, 0.2);
-}
-
-.modalContent h2 {
-  color: white;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-#leaderboardContent {
-  padding: 10px;
-}
-
-.player-info {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  font-size: 18px;
-}
-
-.stats-info {
-  display: flex;
-  gap: 20px;
-  font-size: 16px;
-}
-
-/* Add to your shopStyle.css */
-.leaderboardTable {
-  width: 100%;
-  color: white;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.leaderboardTable th,
-.leaderboardTable td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.leaderboardTable th {
-  font-weight: bold;
-  color: #add8e6;  /* Light blue for headers */
-}
-
-.leaderboard-row {
-  transition: background-color 0.3s ease;
-}
-
-.leaderboard-row:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.leaderboard-row.first {
-  background-color: rgba(255, 215, 0, 0.1);
-}
-
-.leaderboard-row.second {
-  background-color: rgba(192, 192, 192, 0.1);
-}
-
-.leaderboard-row.third {
-  background-color: rgba(205, 127, 50, 0.1);
 }
