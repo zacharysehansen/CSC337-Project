@@ -144,3 +144,75 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeAquarium();
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Get our interactive elements
+    const feedButton = document.getElementById('feedButton');
+    const cuddleButton = document.getElementById('cuddleButton');
+    const fishContainer = document.getElementById('fishContainer');
+    
+    // Track the current interaction mode
+    let currentMode = null;
+    
+    // Add the base button class to our buttons for styling
+    feedButton.classList.add('control-button');
+    cuddleButton.classList.add('control-button');
+    
+    // Helper function to set custom cursor and manage button states
+    function setCustomCursor(imagePath, activeButton) {
+        // First, remove active class from all buttons
+        [feedButton, cuddleButton].forEach(button => {
+            button.classList.remove('active');
+        });
+        
+        // Set the cursor and activate the clicked button
+        document.body.style.cursor = `url(${imagePath}), auto`;
+        activeButton.classList.add('active');
+    }
+    
+    // Helper function to reset cursor and button states
+    function resetCursor() {
+        document.body.style.cursor = 'auto';
+        currentMode = null;
+        
+        // Remove active class from all buttons
+        [feedButton, cuddleButton].forEach(button => {
+            button.classList.remove('active');
+        });
+    }
+    
+    // Add click handlers for the buttons
+    feedButton.addEventListener('click', () => {
+        // If we're already in feed mode, reset everything
+        if (currentMode === 'feed') {
+            resetCursor();
+            return;
+        }
+        
+        currentMode = 'feed';
+        setCustomCursor('./imgs/food.png', feedButton);
+    });
+    
+    cuddleButton.addEventListener('click', () => {
+        // If we're already in cuddle mode, reset everything
+        if (currentMode === 'cuddle') {
+            resetCursor();
+            return;
+        }
+        
+        currentMode = 'cuddle';
+        setCustomCursor('./imgs/petHand.png', cuddleButton);
+    });
+    
+    // Add click handler for the fish container
+    fishContainer.addEventListener('click', (event) => {
+        // Only handle clicks on fish images
+        if (event.target.tagName === 'IMG' && currentMode) {
+            console.log("It got pet!");
+            // Here you could add the logic for what happens when a fish is fed or cuddled
+            
+            // Reset the cursor and button states after interaction
+            resetCursor();
+        }
+    });
+});

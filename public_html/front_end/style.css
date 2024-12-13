@@ -12,6 +12,30 @@ body {
   overflow: hidden;
 }
 
+.control-button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  background-color: white;
+  color: #3498db;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.control-button:hover {
+  background-color: #eaf2f8;
+}
+
+/* This class will be applied when the button is in active state */
+.control-button.active {
+  background-color: #3498db;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: scale(0.98);
+}
+
 /* header is just the white space on top for all the 'stats' (coins, health, buttons, etc) */
 header {
   padding: 10px;

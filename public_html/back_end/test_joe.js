@@ -33,6 +33,7 @@ async function verifyUser() {
             console.log('Username matches:', foundUser.username === TEST_USERNAME);
             console.log('Coins are 500:', foundUser.coins === 500);
             console.log('Level is 3:', foundUser.level === 3);
+            mongoose.users.deleteOne({ username: TEST_USERNAME })
             
         } else {
             console.log('User not found! The save operation may have failed.');
@@ -41,7 +42,6 @@ async function verifyUser() {
     } catch (error) {
         console.error('Error verifying user:', error);
     } finally {
-        
         // Close the database connection
         await mongoose.connection.close();
         console.log('Database connection closed');
