@@ -88,3 +88,31 @@ main {
 #actions button {
   margin: 0.5em;
 }
+
+/* Leaderboard container */
+#leaderboard {
+  position: fixed;
+  right: 20px;
+  top: 100px;
+  width: 200px;
+  padding: 15px;
+  background-color: #ffffffaa; /* Semi-transparent white */
+  border: 2px solid #3498db;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  color: #3498db;
+  text-align: center;
+}
+
+#leaderboard h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+#leaderboard p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
