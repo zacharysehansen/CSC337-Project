@@ -88,8 +88,8 @@ async function handleLogin(event) {
 
         const checkData = await checkResponse.json();
 
-        if (checkData.success) {
-            const shouldLogin = confirm('This username already exists. Would you like to login instead?');
+        if (!checkData.success) {
+            const shouldLogin = confirm('This username does not exist. Would you like to sign up instead?');
             if (shouldLogin) {
                 showForm('login');
                 // Pre-fill the username in login form
