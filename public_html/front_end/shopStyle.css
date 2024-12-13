@@ -40,12 +40,12 @@
     margin-left: 30%;
     margin-top: 15%;
     display: grid;
-    grid-template-columns: 150px 150px;
+    grid-template-columns: 1fr 1fr;
     justify-items: right; /* Centers items horizontally in their grid cells */
     align-items: right; /* Centers items vertically in their grid cells */
     gap: 0px;  /* Very tight spacing */
-    column-gap: 0px;  /* Specifically controls column spacing */
-    row-gap: 15px;     /* Controls row spacing */
+    column-gap: 1%;  /* Specifically controls column spacing */
+    row-gap: 2%;     /* Controls row spacing */
 }
 
 .fishContent img {
