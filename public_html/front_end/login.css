@@ -1,4 +1,12 @@
-* {
+/* 
+CSC 337 Final Project: Pocket Pond
+Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
+Description: The login.css is the main interface for the project. It includes a game title, a login/signup section, 
+and a menu for navigation. It uses keyframes to add effects, and user authentication forms for login and signup. 
+*/ 
+
+*
+{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -16,9 +24,10 @@ body {
 /* Bubble animations */
 .bubble {
     position: absolute;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1); /* make it as trasnaparent */
+    border-radius: 50%; /* Make bubbles circles */
     pointer-events: none;
+    bottom: -30px; /* they start slightly below the screen to look natural */
 }
 
 .bubble-small {
@@ -33,19 +42,20 @@ body {
     animation: floatLarge 5s infinite;
 }
 
+/* small bubbles */
 @keyframes floatSmall {
-    0% { transform: translateY(100vh) translateX(0) scale(0); }
-    100% { transform: translateY(-100vh) translateX(-50px) scale(1); }
+    0% { transform: translateY(0) scale(0.3); } 
+    100% { transform: translateY(-120vh) scale(0.6); } /* Smaller final size */
 }
 
 @keyframes floatMedium {
-    0% { transform: translateY(100vh) translateX(0) scale(0); }
-    100% { transform: translateY(-100vh) translateX(50px) scale(1); }
+    0% { transform: translateY(0) scale(0.5); } 
+    100% { transform: translateY(-120vh) scale(0.9); } 
 }
 
 @keyframes floatLarge {
-    0% { transform: translateY(100vh) translateX(0) scale(0); }
-    100% { transform: translateY(-100vh) translateX(-20px) scale(1); }
+    0% { transform: translateY(0) scale(0.7); } 
+    100% { transform: translateY(-120vh) scale(1.2); }
 }
 
 /* Layout */
@@ -65,6 +75,19 @@ body {
     object-fit: cover;
 }
 
+.game-title {
+    position: absolute; 
+    top: 50%; 
+    left: 65%; 
+    transform: translate(-50%, -50%); 
+    color: white; 
+    font-size: 3rem; 
+    font-weight: bold; 
+    font-family: 'Dancing Script', cursive, 'Arial', sans-serif;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); 
+    white-space: nowrap; 
+}
+
 .right-section {
     width: 320px;
     background: linear-gradient(135deg, #1e5799 0%, #207cca 100%);
@@ -74,7 +97,6 @@ body {
     justify-content: center;
 }
 
-/* Menu Container */
 .menu-container {
     display: flex;
     flex-direction: column;
@@ -83,10 +105,9 @@ body {
 }
 
 .hidden {
-    display: none !important;
+    display: none !important; /* duplicated somewhere */
 }
 
-/* Form Container */
 .form-container {
     display: none;
     background: rgba(255, 255, 255, 0.15);
@@ -101,7 +122,6 @@ body {
     animation: fadeIn 0.3s ease;
 }
 
-/* Form Elements */
 .input-field {
     width: 100%;
     padding: 10px;
@@ -117,7 +137,6 @@ body {
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* Buttons */
 .button {
     width: 100%;
     padding: 10px;
@@ -166,7 +185,6 @@ body {
     background: rgba(255, 255, 255, 0.3);
 }
 
-/* Help Text */
 .help-text {
     color: white;
     margin: 15px 0;
@@ -183,7 +201,6 @@ h3 {
     font-size: 18px;
 }
 
-/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
