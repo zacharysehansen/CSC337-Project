@@ -1,6 +1,10 @@
-/* this is the style file for the absolutely fish-tastic pocket pond web game. 
-It is responsible for styling the webpage, aka connecting image links, doing the spacing,
-and layout for the main aquarium screen. */
+/* 
+CSC 337 Final Project: Pocket Pond
+Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
+ Description: This is the style file for the absolutely fish-tastic pocket pond web game. It is responsible for styling the webpage, 
+ aka connecting image links, doing the spacing, and layout for the main aquarium screen. 
+*/
+
 
 body {
   font-family: Arial, sans-serif; /* guys we gotta change this lol */
