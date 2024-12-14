@@ -380,7 +380,6 @@ app.post('/login', async (req, res) => {
 app.post('/signup', async (req, res) => {
     const { fullName, email, username } = req.body;
     console.log('Received signup request:', { fullName, email, username });
-
     try {
         const existingUser = await User.findOne({ username });
         if (existingUser) {
@@ -388,30 +387,31 @@ app.post('/signup', async (req, res) => {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
+        // Modified to match Fish schema
         const startFish = new Fish({
             name: 'Bubbles',
-            type: 'startßFish',
+            type: 'startFish',
             health: 2,
-            isHungry: true,
-            beenFed: 0,
+            beenFed: false,     // Changed from 0 to false to match schema
             beenPet: false,
             accessories: []
+            // Removed isHungry as it's not in the schema
         });
+
+        const savedStartFish = await startFish.save();
 
         const user = new User({
             username,
-            fullName,
-            email,
+            // Removed fullName and email as they're not in the schema
             lastAccessed: new Date().toISOString(),
             coins: 100,
             level: 1,
-            inventory: [startFish],
+            inventory: [savedStartFish._id],
         });
 
         console.log('Attempting to save user:', user);
         await user.save();
         console.log('User saved successfully:', username);
-
         res.json({ success: true, user });
     } catch (error) {
         console.error('Signup error:', error);
