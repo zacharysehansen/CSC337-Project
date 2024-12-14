@@ -1,3 +1,8 @@
+//CSC 337 Final Project: Pocket Pond
+//Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
+//Description: This script is the core logic for the Pocket Pond game, managing user interactions, aquarium animations, and backend integration.
+
+
 const API_URL = 'http://127.0.0.1:3000';
 let animationFrameId = null;
 
