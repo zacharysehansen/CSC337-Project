@@ -1,3 +1,9 @@
+// Team: Sameeka Maroli, Zachary Hanse, Jordan Demler
+// server.js
+// CSC337
+// This script creates an express server to handle to send and recieve updates to the MongoDB server =)
+// The code handles race conditions for multiple users through a locking system using maps (CSC 452)
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');

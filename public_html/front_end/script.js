@@ -1,4 +1,3 @@
-
 //CSC 337 Final Project: Pocket Pond
 // Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
 // Description: The login.css is the main interface for the project. It includes a game title, a login/signup section, 
