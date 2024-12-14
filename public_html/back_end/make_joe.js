@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
 const Fish = mongoose.model('Fish', fishSchema);
 const User = mongoose.model('User', userSchema);
 
-const TEST_USERNAME = 'joe';
+const TEST_USERNAME = 'oe';
 
 async function saveUserWithFish() {
     try {
