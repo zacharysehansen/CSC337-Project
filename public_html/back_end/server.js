@@ -1,3 +1,9 @@
+// Team: Sameeka Maroli, Zachary Hanse, Jordan Demler
+// server.js
+// CSC337
+// This script creates an express server to handle to send and recieve updates to the MongoDB server =)
+// The code handles race conditions for multiple users through a locking system using maps (CSC 452)
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -382,6 +388,16 @@ app.post('/signup', async (req, res) => {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
+        const startFish = new Fish({
+            name: 'Bubbles',
+            type: 'startßFish',
+            health: 2,
+            isHungry: true,
+            beenFed: 0,
+            beenPet: false,
+            accessories: []
+        });
+
         const user = new User({
             username,
             fullName,
@@ -389,7 +405,7 @@ app.post('/signup', async (req, res) => {
             lastAccessed: new Date().toISOString(),
             coins: 100,
             level: 1,
-            inventory: [],
+            inventory: [startFish],
         });
 
         console.log('Attempting to save user:', user);
