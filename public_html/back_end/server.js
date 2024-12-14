@@ -444,3 +444,35 @@ app.get('/leaderboard/top3', async (req, res) => {
         });
     }
 });
+<<<<<<< HEAD
+=======
+
+app.post('/user/:username/coins', async (req, res) => {
+    const { username } = req.body;
+
+    try {
+        const user = await User.findOne({ username });
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            username: user.username,
+            coins: user.coins
+        });
+
+    } catch (error) {
+        console.error('Error fetching user coins:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error fetching user coins',
+            details: error.message
+        });
+    }
+});
+>>>>>>> 6d762cc013200142c1adcafe0f4449bc9d56e7ec
