@@ -6,7 +6,8 @@ const { Fish, User, Leaderboard } = require('./models');
 const app = express();
 
 app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://127.0.0.1:3000'],
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://127.0.0.1:3000',
+        'http://64.23.229.25:5500'],
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
 }));
