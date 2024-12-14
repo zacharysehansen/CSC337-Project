@@ -231,6 +231,212 @@ function resetCursor() {
     });
 }
     
+<<<<<<< HEAD
+=======
+    // Track the current interaction mode
+    let currentMode = null;
+    
+    // Add the base button class to our buttons for styling
+    feedButton.classList.add('control-button');
+    cuddleButton.classList.add('control-button');
+    
+    // Helper function to set custom cursor and manage button states
+    function setCustomCursor(imagePath, activeButton) {
+        [feedButton, cuddleButton].forEach(button => {
+            button.classList.remove('active');
+        });
+        
+        document.body.style.cursor = `url(${imagePath}), auto`;
+        activeButton.classList.add('active');
+    }
+    
+    // Helper function to reset cursor and button states
+    function resetCursor() {
+        document.body.style.cursor = 'auto';
+        currentMode = null;
+        
+        [feedButton, cuddleButton].forEach(button => {
+            button.classList.remove('active');
+        });
+    }
+
+    async function interactWithFish(fishElement, interactionType) {
+        try {
+            // Log the start of interaction and basic info
+            console.log('Starting fish interaction:', {
+                interactionType,
+                fishId: fishElement.getAttribute('alt'),
+                fishPosition: fishElement.getBoundingClientRect()
+            });
+    
+            const username = getCookie('username');
+            console.log('Username from cookie:', username);
+    
+            if (!username) {
+                throw new Error('User not authenticated');
+            }
+    
+            const fishId = fishElement.getAttribute('alt');
+            const endpoint = `${API_URL}/user/${username}/${interactionType}/${fishId}`;
+            console.log('Making request to endpoint:', endpoint);
+    
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            console.log('Server response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to ${interactionType} fish`);
+            }
+    
+            // Log the fish data before updating
+            console.log('Current fish element state:', {
+                classList: Array.from(fishElement.classList),
+                position: fishElement.getBoundingClientRect(),
+                attributes: {
+                    alt: fishElement.alt,
+                    id: fishElement.id,
+                    health: fishElement.getAttribute('data-health')
+                }
+            });
+    
+            // Visual feedback logging
+            console.log('Adding interaction feedback class');
+            fishElement.classList.add('interaction-feedback');
+    
+            // Get updated fish data
+            const fishResponse = await fetch(`${API_URL}/user/${username}/fish-types`, {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            const userData = await fishResponse.json();
+            console.log('Updated fish data received:', userData);
+            
+            const updatedFish = userData.fishTypes.find(fish => fish.name === fishId);
+            console.log('Found matching fish:', updatedFish);
+            
+            if (updatedFish && updatedFish.health === 1) {
+                console.log('Creating coin for fish with health 1');
+                
+                const fishRect = fishElement.getBoundingClientRect();
+                const aquarium = document.getElementById('aquarium');
+                const aquariumRect = aquarium.getBoundingClientRect();
+    
+                console.log('Position calculations:', {
+                    fishRect,
+                    aquariumRect,
+                    calculatedLeft: fishRect.left - aquariumRect.left + (fishRect.width / 2) - 16,
+                    calculatedTop: fishRect.top - aquariumRect.top + fishRect.height
+                });
+    
+                const coin = document.createElement('img');
+                coin.src = './img/coin.png';
+                coin.className = 'coin';
+                
+                coin.style.left = `${fishRect.left - aquariumRect.left + (fishRect.width / 2) - 16}px`;
+                coin.style.top = `${fishRect.top - aquariumRect.top + fishRect.height}px`;
+                
+                console.log('Created coin element:', {
+                    position: {
+                        left: coin.style.left,
+                        top: coin.style.top
+                    },
+                    className: coin.className
+                });
+                
+                aquarium.appendChild(coin);
+                
+                coin.addEventListener('animationend', () => {
+                    console.log('Coin animation completed, removing element');
+                    coin.remove();
+                });
+            }
+    
+            await loadUserFish();
+            console.log('Fish data reloaded');
+    
+        } catch (error) {
+            console.error('Detailed error information:', {
+                error,
+                errorMessage: error.message,
+                errorStack: error.stack
+            });
+            alert(`Failed to ${interactionType} fish. Please try again.`);
+        }
+    }
+    
+    // Add click handlers for the buttons
+    feedButton.addEventListener('click', () => {
+        if (currentMode === 'feed') {
+            resetCursor();
+            return;
+        }
+        
+        currentMode = 'feed';
+        setCustomCursor('./imgs/food.png', feedButton);
+    });
+    
+    cuddleButton.addEventListener('click', () => {
+        if (currentMode === 'cuddle') {
+            resetCursor();
+            return;
+        }
+        
+        currentMode = 'cuddle';
+        setCustomCursor('./imgs/petHand.png', cuddleButton);
+    });
+    
+    // Add click handler for the fish container
+    fishContainer.addEventListener('click', async (event) => {
+        // Only handle clicks on fish images
+        if (event.target.tagName === 'IMG' && currentMode) {
+            const interactionType = currentMode === 'feed' ? 'feed' : 'pet';
+            await interactWithFish(event.target, interactionType);
+            resetCursor();
+        }
+    });
+
+// leaderboard modal and buttons
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Get leaderboard modal and buttons
+    const leaderboard = document.getElementById('leaderboard');
+    const leaderboardButton = document.getElementById('leaderboardButton');
+    const closeLeaderboardButton = document.getElementById('closeLeaderboardButton');
+
+    // Open leaderboard modal
+    leaderboardButton.onclick = function () {
+        leaderboard.style.display = "block";
+    };
+
+    // Close leaderboard modal
+    closeLeaderboardButton.onclick = function () {
+        leaderboard.style.display = "none";
+    };
+
+    // Close leaderboard if clicking outside of it
+    window.onclick = function (event) {
+        if (event.target === leaderboard) {
+            leaderboard.style.display = "none";
+        }
+    };
+
+    // Fetch leaderboard data on load
+    fetchLeaderboardData();
+
+    // Update leaderboard every 5 seconds
+    setInterval(fetchLeaderboardData, 5000);
+});
+
+>>>>>>> 74e4b2cc2e91c2addde96297130da230295b751f
 // Function to fetch leaderboard data
 async function fetchLeaderboardData() {
     try {

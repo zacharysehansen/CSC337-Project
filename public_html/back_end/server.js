@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const { Fish, User, Leaderboard } = require('./models');
+const { Fish, User, Leaderboard } = require('/../back_end/models');
 const app = express();
 
 app.use(cors({
@@ -196,6 +196,105 @@ app.get('/user/:username/fish-types', async (req, res) => {
         res.status(error.status || 500).json({ error: error.message });
     }
 });
+
+// Helper function to get fish details based on type
+function getFishDetails(fishType) {
+    // Map of fish types to their basic configurations
+    const fishConfigs = {
+        sFish: { name: 'Small Fish', cost: 1 },
+        cFish: { name: 'Colorful Fish', cost: 2 },
+        bTang: { name: 'Blue Tang', cost: 3 },
+        eel: { name: 'Electric Eel', cost: 4 },
+        angel: { name: 'Angelfish', cost: 5 },
+        angler: { name: 'Anglerfish', cost: 6 },
+        jelly: { name: 'Jellyfish', cost: 7 },
+        anchovy: { name: 'Anchovy', cost: 8 },
+        clam: { name: 'Giant Clam', cost: 9 }
+    };
+    
+    return fishConfigs[fishType] || null;
+}
+
+// Updated buy-fish route that properly integrates with the models
+app.post('/user/:username/buy-fish', async (req, res) => {
+    const { username } = req.params;
+    const { fishType } = req.body;
+    
+    try {
+        // Start a session for atomic operations
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        
+        try {
+            // Get fish details including cost
+            const fishDetails = getFishDetails(fishType);
+            if (!fishDetails) {
+                throw { status: 400, message: 'Invalid fish type' };
+            }
+            
+            // Find user and verify they exist
+            const user = await User.findOne({ username }).session(session);
+            if (!user) {
+                throw { status: 404, message: 'User not found' };
+            }
+            
+            // Check if user has enough coins
+            if (user.coins < fishDetails.cost) {
+                throw { status: 400, message: 'Insufficient coins' };
+            }
+            
+            // Create new fish document following the schema
+            const newFish = new Fish({
+                name: `${fishDetails.name}`,
+                type: fishType,
+                health: 0,          // Starting health per schema default
+                beenFed: false,     // Per schema default
+                beenPet: false,     // Per schema default
+                accessories: []      // Empty array per schema default
+            });
+            
+            // Save the new fish document
+            await newFish.save({ session });
+            
+            // Update user's coins and add fish to inventory
+            user.coins -= fishDetails.cost;
+            user.inventory.push(newFish._id);
+            await user.save({ session });
+            
+            // Commit the transaction
+            await session.commitTransaction();
+            
+            // Return updated user state
+            const updatedUser = await User.findOne({ username })
+                .populate('inventory')
+                .session(session);
+            
+            res.json({
+                success: true,
+                updatedCoins: user.coins,
+                newFish: newFish,
+                inventory: updatedUser.inventory
+            });
+            
+        } catch (error) {
+            // If anything fails, roll back the transaction
+            await session.abortTransaction();
+            throw error;
+        } finally {
+            // End the session
+            session.endSession();
+        }
+        
+    } catch (error) {
+        // Handle any errors that occurred
+        console.error('Error in buy-fish route:', error);
+        res.status(error.status || 500).json({
+            error: error.message || 'Internal server error',
+            success: false
+        });
+    }
+});
+
 
 async function gracefulShutdown() {
     if (isShuttingDown) {
