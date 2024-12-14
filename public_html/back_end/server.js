@@ -372,7 +372,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Signup route
+// Signup route: Sameeka 
 app.post('/signup', async (req, res) => {
     const { fullName, email, username } = req.body;
     console.log('Received signup request:', { fullName, email, username });
@@ -383,7 +383,7 @@ app.post('/signup', async (req, res) => {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
-        // Modified to match Fish schema
+        // Modified to match Fish schema: Zachary
         const startFish = new Fish({
             name: 'Bubbles',
             type: 'startFish',
@@ -418,31 +418,28 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-app.get('/user/:username/level', async (req, res) => {
-    const { username } = req.params;
-
+app.get('/leaderboard/top3', async (req, res) => {
     try {
-        const user = await User.findOne({ username });
-        
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: 'User not found'
-            });
-        }
+        const topUsers = await User.find({})
+            .sort({ 'inventory.length': -1 })  // Sort by inventory length descending
+            .limit(3)                           // Limit to top 3 only
+            .select('username inventory level');
+
+        const leaderboardData = topUsers.map(user => ({
+            username: user.username,
+            level: user.level,
+            fishCount: user.inventory.length
+        }));
 
         res.json({
             success: true,
-            username: user.username,
-            level: user.level,
-            totalFish: user.inventory.length
+            topPlayers: leaderboardData
         });
-
-    } catch (error) {
-        console.error('Error fetching user level:', error);
+    } catch (error) { //debugging
+        console.error('Error fetching top players:', error);
         res.status(500).json({
             success: false,
-            error: 'Error fetching user level',
+            error: 'Error fetching top players',
             details: error.message
         });
     }

@@ -4,6 +4,8 @@
 
 
 const API_URL = 'http://64.23.229.25:3000';
+//const API_URL= 'http://127.0.0.1:3000';
+
 let animationFrameId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -402,7 +404,7 @@ function resetCursor() {
         }
     });
 
-// leaderboard modal and buttons
+// leaderboard modal and buttons: sameeka added from here
 
 document.addEventListener('DOMContentLoaded', () => {
     // Get leaderboard modal and buttons
@@ -410,31 +412,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const leaderboardButton = document.getElementById('leaderboardButton');
     const closeLeaderboardButton = document.getElementById('closeLeaderboardButton');
 
-    // Open leaderboard modal
     leaderboardButton.onclick = function () {
         leaderboard.style.display = "block";
     };
 
-    // Close leaderboard modal
     closeLeaderboardButton.onclick = function () {
         leaderboard.style.display = "none";
     };
 
-    // Close leaderboard if clicking outside of it
     window.onclick = function (event) {
         if (event.target === leaderboard) {
             leaderboard.style.display = "none";
         }
     };
 
-    // Fetch leaderboard data on load
     fetchLeaderboardData();
 
-    // Update leaderboard every 5 seconds
-    setInterval(fetchLeaderboardData, 5000);
+    setInterval(fetchLeaderboardData, 50000);
 });
 
-// Function to fetch leaderboard data
+// Function to fetch leaderboard data from mongoDB
 async function fetchLeaderboardData() {
     try {
         const response = await fetch(`${API_URL}/leaderboard`);
@@ -444,14 +441,12 @@ async function fetchLeaderboardData() {
 ß
         const data = await response.json();
 
-        // Update leaderboard
         updateLeaderboard(data.topLeader, data.coins, data.fishCount);
     } catch (error) {
         console.error("Error fetching leaderboard data:", error);
     }
 }
 
-// Function to update leaderboard content
 function updateLeaderboard(topLeader, coins, fishCount) {
     document.getElementById('topLeader').textContent = topLeader;
     document.getElementById('leaderCoins').textContent = coins;

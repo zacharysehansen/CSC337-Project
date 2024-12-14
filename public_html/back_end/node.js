@@ -1,3 +1,9 @@
+////CSC 337 Final Project: Pocket Pond
+//Team: Sameeka Maroli
+//Description: This code sets up an Express server that fetches the top 3 users from a MongoDB collection based on their coin count and returns the data as JSON via the /leaderboard endpoint. 
+// It also periodically updates the leaderboard data ( by incrementing coins and fishCount randomly every 5 seconds).
+
+
 const express = require('express');
 const app = express();
 app.use(express.static());
@@ -6,7 +12,7 @@ const { MongoClient } = require("mongodb");
 
 const uri = "mongodb://64.23.229.25:27017"
 const dbName = "fishtank";
-const collectionName = "27017";
+const collectionName = "users";
 
 
 async function getLeaderboard() {
@@ -19,7 +25,6 @@ async function getLeaderboard() {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
-    // Aggregate to extract users as an array, sort by coins, and limit to 3
     const result = await collection.aggregate([
       {
         $project: {
@@ -28,7 +33,7 @@ async function getLeaderboard() {
           }
         }
       },
-      { $unwind: "$users" }, // Flatten the array
+      { $unwind: "$users" },
       {
         $project: {
           username: "$users.v.username",
@@ -40,7 +45,7 @@ async function getLeaderboard() {
       { $limit: 3 } // Get top 3 users
     ]).toArray();
 
-    // Format result into a JSON object
+    //  into  JSON object
     const leaderboard = result.map(user => ({
       username: user.username,
       coins: user.coins,
@@ -56,8 +61,8 @@ async function getLeaderboard() {
   }
 }
 
-// Mock leaderboard data
-let leaderboardData = getLeaderboard();
+// // Mock leaderboard data
+// let leaderboardData = getLeaderboard();
 
 app.get('/leaderboard', (req, res) => {
     console.log("NOT ERROR: Asking for leaderboard values.")

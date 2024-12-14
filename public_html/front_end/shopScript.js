@@ -1,5 +1,5 @@
 /*
-Team: Sameeka Maroli, Zachary Hansen, Jordan Demler
+Team: Jordan Demler
 CSC 337: Pocket Pond
 This JavaScript file manages the functionality for the shop in the index.html page, using a modal box to create a pop-up shop interface. 
 It handles the initial loading of the shop, purchasing fish, and integrates a modal dialog adapted from W3Schools' tutorial on modals.
