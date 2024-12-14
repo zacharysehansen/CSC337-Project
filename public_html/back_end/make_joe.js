@@ -36,7 +36,7 @@ async function saveUserWithFish() {
         console.log('Creating fish...');
         const startFish = new Fish({
             name: 'Bubbles',
-            type: 'startFish',
+            type: 'startßFish',
             health: 2,
             isHungry: true,
             beenFed: 0,

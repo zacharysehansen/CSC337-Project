@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const { Fish, User, Leaderboard } = require('/../back_end/models');
+const { Fish, User, Leaderboard } = require('./models');
 const app = express();
 
 app.use(cors({

@@ -2,13 +2,7 @@
 CSC 337 Final Project: Pocket Pond
 Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
  Description: This is the style file for the absolutely fish-tastic pocket pond web game. It is responsible for styling the webpage, 
-<<<<<<< HEAD
  aka connecting image links, doing the spacing, and layout for the main aquarium screen. */
-=======
- aka connecting image links, doing the spacing, and layout for the main aquarium screen. 
-*/
-
->>>>>>> 74e4b2cc2e91c2addde96297130da230295b751f
 
 body {
   font-family: Arial, sans-serif; 
@@ -105,7 +99,7 @@ main {
   display: grid;
   place-items: center;
   /* Adding padding to main ensures minimum spacing from viewport edges */
-  padding: 2rem;
+  padding: 2rem; 
 }
 
 #aquarium {
@@ -143,3 +137,29 @@ main {
 #actions button {
   margin: 0.5em;
 }
+
+/* Leaderboard container */
+#leaderboard {
+  position: fixed;
+  right: 20px;
+  top: 100px;
+  width: 200px;
+  padding: 15px;
+  background-color: #ffffffaa; /* Semi-transparent white */
+  border: 2px solid #3498db;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  color: #3498db;
+  text-align: center;
+}
+#leaderboard h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #2c3e50;
+}
+#leaderboard p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+

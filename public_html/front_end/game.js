@@ -231,8 +231,6 @@ function resetCursor() {
     });
 }
     
-<<<<<<< HEAD
-=======
     // Track the current interaction mode
     let currentMode = null;
     
@@ -436,7 +434,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(fetchLeaderboardData, 5000);
 });
 
->>>>>>> 74e4b2cc2e91c2addde96297130da230295b751f
 // Function to fetch leaderboard data
 async function fetchLeaderboardData() {
     try {
@@ -444,10 +441,10 @@ async function fetchLeaderboardData() {
         if (!response.ok) {
             throw new Error("Failed to fetch leaderboard data");
         }
-
+ß
         const data = await response.json();
 
-        // Update leaderboard dynamically
+        // Update leaderboard
         updateLeaderboard(data.topLeader, data.coins, data.fishCount);
     } catch (error) {
         console.error("Error fetching leaderboard data:", error);
