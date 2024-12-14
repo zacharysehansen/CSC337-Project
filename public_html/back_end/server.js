@@ -388,6 +388,16 @@ app.post('/signup', async (req, res) => {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
+        const startFish = new Fish({
+            name: 'Bubbles',
+            type: 'startßFish',
+            health: 2,
+            isHungry: true,
+            beenFed: 0,
+            beenPet: false,
+            accessories: []
+        });
+
         const user = new User({
             username,
             fullName,
@@ -395,7 +405,7 @@ app.post('/signup', async (req, res) => {
             lastAccessed: new Date().toISOString(),
             coins: 100,
             level: 1,
-            inventory: [],
+            inventory: [startFish],
         });
 
         console.log('Attempting to save user:', user);
