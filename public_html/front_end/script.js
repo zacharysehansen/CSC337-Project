@@ -1,10 +1,11 @@
+
 //CSC 337 Final Project: Pocket Pond
 // Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
 // Description: The login.css is the main interface for the project. It includes a game title, a login/signup section, 
 // and a menu for navigation. It uses keyframes to add effects, and user authentication forms for login and signup. 
 
 
-const API_URL = 'http://64.23.229.25:3000' // Backend URL
+const API_URL = 'http://64.23.229.25:3000'; // Backend URL
 
 document.addEventListener('DOMContentLoaded', function() {
     goBack();
@@ -95,7 +96,7 @@ async function handleLogin(event) {
         const checkData = await checkResponse.json();
 
         if (!checkData.success) {
-            const shouldLogin = confirm('This username does not exist. Would you like to sign upy instead?');
+            const shouldLogin = confirm('This username does not exist. Would you like to sign up instead?');
             if (shouldLogin) {
                 showForm('login');
                 // Pre-fill the username in login form
