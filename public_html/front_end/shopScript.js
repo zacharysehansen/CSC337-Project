@@ -17,8 +17,6 @@ button.onclick = function() {
   console.log("shopButton")
 }
 
-
-
 // Get the container holding all fish content
 const fishContent = document.getElementById('fishContent');
 
