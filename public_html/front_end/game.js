@@ -22,22 +22,23 @@ function checkAuthentication() {
     return username;
 }
 
+/* Update the loadUserFish function to include fish IDs */
 async function loadUserFish() {
     try {
         const username = checkAuthentication();
         if (!username) return;
-
+  
         const response = await fetch(`${API_URL}/user/${username}/fish-types`, {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-
+  
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+  
         const userData = await response.json();
         const fishContainer = document.getElementById('fishContainer');
         fishContainer.innerHTML = '';
@@ -52,20 +53,19 @@ async function loadUserFish() {
             fishElement.id = `fish_${index}`;
             fishElement.src = `./imgs/${fish.type}.gif`;
             fishElement.alt = fish.name;
+            fishElement.setAttribute('data-fish-id', fishElement.id); // Add the fish ID
             fishElement.setAttribute('data-health', fish.health);
             fishElement.setAttribute('data-hungry', fish.isHungry);
             
-            // Add status indicators for health and hunger
-            if (fish.isHungry) {
-                fishElement.classList.add('hungry');
+            if (fish.beenFed) {
+                fishElement.classList.add('fed');
             }
-            if (fish.health < 2) {
-                fishElement.classList.add('unhealthy');
+            if (fish.beenPet) {
+                fishElement.classList.add('pet');
             }
             
             fishElement.style.position = 'absolute';
             fishContainer.appendChild(fishElement);
-            console.log(`Added fish: ${fish.type} named ${fish.name}`);
         });
         
         initializeAquarium();
@@ -75,7 +75,8 @@ async function loadUserFish() {
         const fishContainer = document.getElementById('fishContainer');
         fishContainer.innerHTML = '<p>Could not load fish at this time. Please try again later.</p>';
     }
-}
+  }
+  
 
 function initializeAquarium() {
     if (animationFrameId) {
@@ -160,12 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Helper function to set custom cursor and manage button states
     function setCustomCursor(imagePath, activeButton) {
-        // First, remove active class from all buttons
         [feedButton, cuddleButton].forEach(button => {
             button.classList.remove('active');
         });
         
-        // Set the cursor and activate the clicked button
         document.body.style.cursor = `url(${imagePath}), auto`;
         activeButton.classList.add('active');
     }
@@ -175,15 +174,52 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.cursor = 'auto';
         currentMode = null;
         
-        // Remove active class from all buttons
         [feedButton, cuddleButton].forEach(button => {
             button.classList.remove('active');
         });
     }
+
+    // Function to interact with fish (feed or pet)
+    async function interactWithFish(fishElement, interactionType) {
+        try {
+            const username = getCookie('username');
+            if (!username) {
+                throw new Error('User not authenticated');
+            }
+
+            // Extract the fish ID from the element
+            const fishId = fishElement.getAttribute('alt');
+            const endpoint = `${API_URL}/user/${username}/${interactionType}/${fishId}`;
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to ${interactionType} fish`);
+            }
+
+            // Visual feedback for successful interaction
+            fishElement.classList.add('interaction-feedback');
+            setTimeout(() => {
+                fishElement.classList.remove('interaction-feedback');
+            }, 500);
+
+            // Reload fish data to update display
+            await loadUserFish();
+
+        } catch (error) {
+            console.error(`Error during fish ${interactionType}:`, error);
+            alert(`Failed to ${interactionType} fish. Please try again.`);
+        }
+    }
     
     // Add click handlers for the buttons
     feedButton.addEventListener('click', () => {
-        // If we're already in feed mode, reset everything
         if (currentMode === 'feed') {
             resetCursor();
             return;
@@ -194,7 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     cuddleButton.addEventListener('click', () => {
-        // If we're already in cuddle mode, reset everything
         if (currentMode === 'cuddle') {
             resetCursor();
             return;
@@ -205,13 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Add click handler for the fish container
-    fishContainer.addEventListener('click', (event) => {
+    fishContainer.addEventListener('click', async (event) => {
         // Only handle clicks on fish images
         if (event.target.tagName === 'IMG' && currentMode) {
-            console.log("It got pet!");
-            // Here you could add the logic for what happens when a fish is fed or cuddled
-            
-            // Reset the cursor and button states after interaction
+            const interactionType = currentMode === 'feed' ? 'feed' : 'pet';
+            await interactWithFish(event.target, interactionType);
             resetCursor();
         }
     });

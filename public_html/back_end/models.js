@@ -2,28 +2,78 @@ const mongoose = require('mongoose');
 
 // Fish Schema
 const fishSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    type: { type: String, required: true },
-    health: { type: Number, default: 2 }, // Max health is 2
-    isHungry: { type: Boolean, default: true },
-    beenFed: { type: Number, default: 0 }, // Max is 2 times per day
-    beenPet: { type: Boolean, default: false },
-    accessories: { type: [String], default: [] }
+    // Basic fish information
+    name: { 
+        type: String, 
+        required: true 
+    },
+    type: { 
+        type: String, 
+        required: true 
+    },
+    
+    // Health system - starts at 0, increases with interactions
+    health: { 
+        type: Number, 
+        default: 0,
+        min: 0,
+        max: 2
+    },
+    
+    // Interaction tracking
+    beenFed: { 
+        type: Boolean, 
+        default: false 
+    },
+    beenPet: { 
+        type: Boolean, 
+        default: false 
+    },
+    
+    // Customization options
+    accessories: { 
+        type: [String], 
+        default: [] 
+    }
 });
 
-// User Schema
+// User Schema - remains largely the same
 const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    lastAccessed: { type: String, required: true },
-    coins: { type: Number, required: true, default: 100 },
-    level: { type: Number, required: true, default: 1 },
-    inventory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Fish' }]
+    username: { 
+        type: String, 
+        required: true, 
+        unique: true 
+    },
+    lastAccessed: { 
+        type: String, 
+        required: true 
+    },
+    coins: { 
+        type: Number, 
+        required: true, 
+        default: 100 
+    },
+    level: { 
+        type: Number, 
+        required: true, 
+        default: 1 
+    },
+    inventory: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Fish' 
+    }]
 });
 
-// Leaderboard Schema
+// Leaderboard Schema - remains unchanged
 const leaderboardSchema = new mongoose.Schema({
-    username: { type: String, required: true },
-    fishValue: { type: Number, required: true }
+    username: { 
+        type: String, 
+        required: true 
+    },
+    fishValue: { 
+        type: Number, 
+        required: true 
+    }
 });
 
 // Create models

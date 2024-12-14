@@ -1,17 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Add this at the top with other requires
+const cors = require('cors');
 const path = require('path');
 const { Fish, User, Leaderboard } = require('./models');
 const app = express();
-
-// Add CORS middleware that lets use talk with the front end server. Wwe should be able to get rid
-//of this when we move onto the droplet
-// app.use(cors({
-//     origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://0.0.0.0:3000', 'http://64.23.229.25:3000'],
-//     methods: ['GET', 'POST'],
-//     credentials: true
-// }));
 
 app.use(cors({
     origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://127.0.0.1:3000'],
@@ -19,15 +11,13 @@ app.use(cors({
     credentials: true,
 }));
 
-
 app.use(express.json());
 const PORT = 3000;
 const HOST = '0.0.0.0';
-const HUNGER_TIMER = 15 * 1000;
 const SAVE_TIMER = 15 * 1000;
 const MONGO_URI = 'mongodb://64.23.229.25:27017/fishtank';
 
-//This initializes a lock, so multiple users cannot enter the same account
+// Initialize lock system for concurrent operations
 const lockMap = new Map();
 let isShuttingDown = false;
 
@@ -42,6 +32,18 @@ function releaseLock(userId) {
     lockMap.delete(userId);
 }
 
+// Helper function to update fish health based on beenFed and beenPet status
+function updateFishHealth(fish) {
+    // If the fish has been both fed and pet, set health to 2
+    if (fish.beenFed && fish.beenPet) {
+        fish.health = 2;
+    }
+    // If the fish has been either fed OR pet (but not both), set health to 1
+    else if (fish.beenFed || fish.beenPet) {
+        fish.health = 1;
+    }
+    // If neither fed nor pet, health remains at current value
+}
 
 app.post('/user/:username', async (req, res) => {
     const username = req.params.username;
@@ -49,7 +51,6 @@ app.post('/user/:username', async (req, res) => {
     try {
         acquireLock(username);
         
-
         let user = await User.findOne({ username });
         
         if (!user) {
@@ -76,51 +77,92 @@ app.post('/user/:username', async (req, res) => {
     }
 });
 
-// Feed fish route
-app.post('/user/:username/feed/:fishId', async (req, res) => {
-    const { username, fishId } = req.params;
-    
+app.post('/user/:username/feed/:fishName', async (req, res) => {
+    // Note that we changed the parameter name to fishName to be more descriptive
+    const { username, fishName } = req.params;
+   
     try {
         acquireLock(username);
-        
-        // Find user and verify ownership of fish
+       
+        // First, find the user and populate their inventory
         const user = await User.findOne({ username }).populate('inventory');
         if (!user) {
+            console.log("No user found!");
             throw { status: 404, message: 'User not found' };
         }
+
+        // Instead of finding by ID, we now search the user's inventory directly for a matching name
+        // We use find() instead of findById() since we're searching through an array
+        const fish = user.inventory.find(f => f.name === fishName);
         
-        // Find the fish in the user's inventory
-        const fish = await Fish.findById(fishId);
-        if (!fish || !user.inventory.some(f => f._id.equals(fish._id))) {
+        if (!fish) {
+            console.log("No fish found!");
             throw { status: 404, message: 'Fish not found in inventory' };
         }
+
+        console.log("Fish found!");
         
-        // Validate feeding conditions
-        if (fish.beenFed >= 2) {
-            throw { status: 400, message: 'Fish cannot be fed anymore today' };
-        }
-        if (!fish.isHungry) {
-            throw { status: 400, message: 'Fish is not hungry' };
-        }
+        // Update the fish's properties
+        fish.beenFed = true;
+        updateFishHealth(fish);
         
-        // Update fish status
-        fish.isHungry = false;
-        fish.beenFed += 1;
-        if (fish.beenFed === 2) {
-            fish.health = Math.min(fish.health + 1, 2);
-        }
-        
-        await fish.save();
-        
+        // Save the entire user document since we modified the embedded inventory
+        await user.save();
+       
         releaseLock(username);
         res.json({ message: 'Fish fed successfully' });
     } catch (error) {
+        console.log(error.message);
         releaseLock(username);
         res.status(error.status || 500).json({ error: error.message });
     }
 });
 
-// Get fish types route
+// Pet fish route
+app.post('/user/:username/pet/:fishName', async (req, res) => {
+    // We now use fishName instead of fishId in the parameters
+    const { username, fishName } = req.params;
+   
+    try {
+        // The lock system remains the same to prevent concurrent operations
+        acquireLock(username);
+       
+        // First find the user and get their full inventory
+        const user = await User.findOne({ username }).populate('inventory');
+        if (!user) {
+            throw { status: 404, message: 'User not found' };
+        }
+       
+        // Instead of using findById, we search directly in the user's inventory
+        // using the fish name as our search criterion
+        const fish = user.inventory.find(f => f.name === fishName);
+        
+        // If we can't find a fish with that name in the user's inventory,
+        // we throw an error
+        if (!fish) {
+            throw { status: 404, message: 'Fish not found in inventory' };
+        }
+       
+        // Once we've found the right fish, we mark it as having been pet
+        fish.beenPet = true;
+       
+        // The health update logic remains the same
+        updateFishHealth(fish);
+        
+        // Instead of saving just the fish, we save the entire user document
+        // since the fish is now part of the user's inventory
+        await user.save();
+       
+        // Release the lock and send success response
+        releaseLock(username);
+        res.json({ message: 'Fish pet successfully' });
+    } catch (error) {
+        // Error handling remains the same
+        releaseLock(username);
+        res.status(error.status || 500).json({ error: error.message });
+    }
+});
+
 app.get('/user/:username/fish-types', async (req, res) => {
     const { username } = req.params;
     try {
@@ -137,7 +179,8 @@ app.get('/user/:username/fish-types', async (req, res) => {
             type: fish.type,
             name: fish.name,
             health: fish.health,
-            isHungry: fish.isHungry
+            beenFed: fish.beenFed,
+            beenPet: fish.beenPet
         }));
         
         const response = {
@@ -154,22 +197,6 @@ app.get('/user/:username/fish-types', async (req, res) => {
     }
 });
 
-
-async function updateFishHunger() {
-    if (isShuttingDown) return;
-    
-    try {
-        // Update all non-hungry fish to become hungry
-        await Fish.updateMany(
-            { isHungry: false },
-            { $set: { isHungry: true } }
-        );
-    } catch (error) {
-        console.error('Error updating fish hunger:', error);
-    }
-}
-
-
 async function gracefulShutdown() {
     if (isShuttingDown) {
         console.log('Shutdown already in progress');
@@ -179,9 +206,6 @@ async function gracefulShutdown() {
     isShuttingDown = true;
     
     try {
-        // Clear all intervals
-        clearInterval(hungerInterval);
-        
         // Close MongoDB connection
         await mongoose.connection.close();
         
@@ -195,9 +219,6 @@ async function gracefulShutdown() {
         process.exit(1);
     }
 }
-
-
-const hungerInterval = setInterval(updateFishHunger, HUNGER_TIMER);
 
 const server = app.listen(PORT, HOST, () => {
     console.log(`Server running on http://${HOST}:${PORT}`);
@@ -214,14 +235,12 @@ mongoose.connect(MONGO_URI, {heartbeatFrequencyMS: 1000})
 
 mongoose.connection.on('error', err => {
     console.error('MongoDB runtime error:', err);
-    // Attempt to reconnect if connection is lost
     if (err.name === 'MongoNetworkError') {
         console.log('Attempting to reconnect to MongoDB...');
         mongoose.connect(MONGO_URI);
     }
 });
 
-// Handle shutdown signal
 process.on('SIGTERM', () => {
     console.log('Closing HTTP server...');
     gracefulShutdown();
@@ -230,9 +249,7 @@ process.on('SIGTERM', () => {
     });
 });
 
-// Sameeka added from here for login info
-
-// Login 
+// Login route
 app.post('/login', async (req, res) => {
     console.log('Login request received:', req.body);
     const { username } = req.body;
@@ -252,20 +269,19 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
-// Signup 
+
+// Signup route
 app.post('/signup', async (req, res) => {
     const { fullName, email, username } = req.body;
     console.log('Received signup request:', { fullName, email, username });
 
     try {
-        // Check if username already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
             console.log('Username already exists:', username);
             return res.status(400).json({ error: 'Username already exists' });
         }
 
-        // Create new user
         const user = new User({
             username,
             fullName,
