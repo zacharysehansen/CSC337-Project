@@ -1,9 +1,9 @@
 
 //CSC 337 Final Project: Pocket Pond
 // Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
-// Description: The login.css is the main interface for the project. It includes a game title, a login/signup section, 
-// and a menu for navigation. It uses keyframes to add effects, and user authentication forms for login and signup. 
-
+// Description: This JavaScript file manages the functionality of Pocket Pond with features like user authentication (login and signup) 
+// and a dynamic bubble animation. It includes functions for setting and retrieving cookies, handling form submissions, and interacting with a 
+// backend API to validate users.
 
 const API_URL = 'http://127.0.0.1:3000'; // Backend URL
 
@@ -39,10 +39,8 @@ function showForm(formType) {
     // Hide menu
     menuContainer.classList.add('hidden');
 
-    // Hide all forms
     forms.forEach(form => form.classList.remove('active'));
 
-    // Show the selected form
     const form = document.getElementById(`${formType}Form`);
     if (form) {
         form.classList.add('active');
@@ -53,10 +51,8 @@ function goBack() {
     const menuContainer = document.querySelector('.menu-container');
     const forms = document.querySelectorAll('.form-container');
 
-    // Hide all forms
     forms.forEach(form => form.classList.remove('active'));
 
-    // Show menu
     menuContainer.classList.remove('hidden');
 }
 
@@ -66,7 +62,7 @@ function createBubble() {
     const categories = ['bubble-small', 'bubble-medium', 'bubble-large'];
     const category = categories[Math.floor(Math.random() * categories.length)];
     bubble.classList.add(category);
-    const size = category === 'bubble-small' ? Math.random() * 20 + 10 :
+    const size = category === 'bubble-small' ? Math.random() * 20 + 10 : //different sizes
                  category === 'bubble-medium' ? Math.random() * 30 + 20 :
                  Math.random() * 40 + 30;
     bubble.style.width = `${size}px`;
@@ -83,7 +79,7 @@ async function handleLogin(event) {
     const username = event.target.querySelector('input[name="username"]').value;
 
     try {
-        // First check if user exists
+        // check if user exists
         const checkResponse = await fetch(`${API_URL}/login`, {
             method: 'POST',
             headers: {
@@ -96,7 +92,7 @@ async function handleLogin(event) {
         const checkData = await checkResponse.json();
 
         if (!checkData.success) {
-            const shouldLogin = confirm('This username does not exist. Would you like to sign upy instead?');
+            const shouldLogin = confirm('This username does not exist. Would you like to sign u instead?');
             if (shouldLogin) {
                 showForm('login');
                 // Pre-fill the username in login form
@@ -107,7 +103,7 @@ async function handleLogin(event) {
         }
 
         if (checkData.error === 'User not found') {
-            const shouldSignup = confirm('This username does not exist. Would you like to sign up instead?');
+            const shouldSignup = confirm('This username does not exist. Sign up instead!');
             if (shouldSignup) {
                 showForm('signup');
                 // Pre-fill the username in signup form
@@ -126,6 +122,7 @@ async function handleLogin(event) {
         } else {
             alert('Login failed: ' + (checkData.error || 'Unknown error'));
         }
+        //debug
     } catch (error) {
         alert('Error connecting to server. Please try again.');
         console.error('Login error:', error);
@@ -141,7 +138,7 @@ async function handleSignup(event) {
     };
 
     try {
-        // First check if username already exists
+        //  check if usernam  exists
         const checkResponse = await fetch(`${API_URL}/login`, {
             method: 'POST',
             headers: {
@@ -154,7 +151,7 @@ async function handleSignup(event) {
         const checkData = await checkResponse.json();
         
         if (checkData.success) {
-            const shouldLogin = confirm('This username already exists. Would you like to login instead?');
+            const shouldLogin = confirm('This username already exists. Login instead!');
             if (shouldLogin) {
                 showForm('login');
                 // Pre-fill the username in login form
@@ -164,7 +161,7 @@ async function handleSignup(event) {
             return;
         }
 
-        // If username doesn't exist, proceed with signup
+        // Go to  signup
         const signupResponse = await fetch(`${API_URL}/signup`, {
             method: 'POST',
             headers: {
@@ -190,6 +187,5 @@ async function handleSignup(event) {
     }
 }
 
-// Add form submission handlers
 document.getElementById('loginForm').addEventListener('submit', handleLogin);
 document.getElementById('signupForm').addEventListener('submit', handleSignup);

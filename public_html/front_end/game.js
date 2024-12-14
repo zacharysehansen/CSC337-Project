@@ -1,5 +1,89 @@
+//CSC 337 Final Project: Pocket Pond
+//Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
+//Description: This script is the core logic for the Pocket Pond game, managing user interactions, aquarium animations, and backend integration.
+
+
 const API_URL = 'http://127.0.0.1:3000';
 let animationFrameId = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Page loaded, checking authentication...');
+    
+    // Initialize fish and aquarium
+    loadUserFish();
+    window.addEventListener('resize', initializeAquarium);
+    
+    // Initialize buttons
+    initializeButtons();
+
+    // Initialize leaderboard modal
+    initializeLeaderboard();
+
+    // Fetch leaderboard data periodically
+    fetchLeaderboardData();
+    setInterval(fetchLeaderboardData, 1);
+});
+
+function initializeButtons() {
+    const feedButton = document.getElementById('feedButton');
+    const cuddleButton = document.getElementById('cuddleButton');
+    const fishContainer = document.getElementById('fishContainer');
+    const coinsCount = document.getElementById('coinCounter');
+
+    let currentMode = null;
+
+    // Add click handlers
+    feedButton.addEventListener('click', () => toggleMode('feed', feedButton, './imgs/food.png'));
+    cuddleButton.addEventListener('click', () => toggleMode('cuddle', cuddleButton, './imgs/petHand.png'));
+    fishContainer.addEventListener('click', (event) => {
+        if (event.target.tagName === 'IMG' && currentMode) {
+            console.log(`Fish interaction (${currentMode})!`);
+            resetCursor();
+        }
+    });
+
+    function updateCoins() {
+        coins = coinsCount.innerText
+        coins = parseInt(coins)
+        coins += 10
+        coinsCount.innerText = coins
+    }
+
+    function toggleMode(mode, button, cursorImage) {
+        if (currentMode === mode) {
+            resetCursor();
+            return;
+        }
+        updateCoins();
+        currentMode = mode;
+        document.body.style.cursor = `url(${cursorImage}), auto`;
+        feedButton.classList.remove('active');
+        cuddleButton.classList.remove('active');
+        button.classList.add('active');
+    }
+
+    function resetCursor() {
+        document.body.style.cursor = 'auto';
+        currentMode = null;
+        feedButton.classList.remove('active');
+        cuddleButton.classList.remove('active');
+    }
+}
+
+function initializeLeaderboard() {
+    const leaderboard = document.getElementById('leaderboard');
+    const leaderboardButton = document.getElementById('leaderboardButton');
+    const closeLeaderboardButton = document.getElementById('closeLeaderboardButton');
+    leaderboard.style.display = 'none'
+
+    leaderboardButton.onclick = () => (leaderboard.style.display = 'block');
+    closeLeaderboardButton.onclick = () => (leaderboard.style.display = 'none');
+    window.onclick = (event) => {
+        if (event.target === leaderboard) {
+            leaderboard.style.display = 'none';
+        }
+    };
+}
 
 function getCookie(name) {
     const cookieName = name + "=";
@@ -22,23 +106,22 @@ function checkAuthentication() {
     return username;
 }
 
-/* Update the loadUserFish function to include fish IDs */
 async function loadUserFish() {
     try {
         const username = checkAuthentication();
         if (!username) return;
-  
+
         const response = await fetch(`${API_URL}/user/${username}/fish-types`, {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-  
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
+
         const userData = await response.json();
         const fishContainer = document.getElementById('fishContainer');
         fishContainer.innerHTML = '';
@@ -53,19 +136,20 @@ async function loadUserFish() {
             fishElement.id = `fish_${index}`;
             fishElement.src = `./imgs/${fish.type}.gif`;
             fishElement.alt = fish.name;
-            fishElement.setAttribute('data-fish-id', fishElement.id); // Add the fish ID
             fishElement.setAttribute('data-health', fish.health);
             fishElement.setAttribute('data-hungry', fish.isHungry);
             
-            if (fish.beenFed) {
-                fishElement.classList.add('fed');
+            // Add status indicators for health and hunger
+            if (fish.isHungry) {
+                fishElement.classList.add('hungry');
             }
-            if (fish.beenPet) {
-                fishElement.classList.add('pet');
+            if (fish.health < 2) {
+                fishElement.classList.add('unhealthy');
             }
             
             fishElement.style.position = 'absolute';
             fishContainer.appendChild(fishElement);
+            console.log(`Added fish: ${fish.type} named ${fish.name}`);
         });
         
         initializeAquarium();
@@ -75,8 +159,7 @@ async function loadUserFish() {
         const fishContainer = document.getElementById('fishContainer');
         fishContainer.innerHTML = '<p>Could not load fish at this time. Please try again later.</p>';
     }
-  }
-  
+}
 
 function initializeAquarium() {
     if (animationFrameId) {
@@ -137,150 +220,17 @@ function initializeAquarium() {
     animateFish();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Page loaded, checking authentication...');
-    loadUserFish();
+// Helper function to reset cursor and button states
+function resetCursor() {
+    document.body.style.cursor = 'auto';
+    currentMode = null;
     
-    window.addEventListener('resize', () => {
-        initializeAquarium();
+    // Remove active class from all buttons
+    [feedButton, cuddleButton].forEach(button => {
+        button.classList.remove('active');
     });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Get our interactive elements
-    const feedButton = document.getElementById('feedButton');
-    const cuddleButton = document.getElementById('cuddleButton');
-    const fishContainer = document.getElementById('fishContainer');
+}
     
-    // Track the current interaction mode
-    let currentMode = null;
-    
-    // Add the base button class to our buttons for styling
-    feedButton.classList.add('control-button');
-    cuddleButton.classList.add('control-button');
-    
-    // Helper function to set custom cursor and manage button states
-    function setCustomCursor(imagePath, activeButton) {
-        [feedButton, cuddleButton].forEach(button => {
-            button.classList.remove('active');
-        });
-        
-        document.body.style.cursor = `url(${imagePath}), auto`;
-        activeButton.classList.add('active');
-    }
-    
-    // Helper function to reset cursor and button states
-    function resetCursor() {
-        document.body.style.cursor = 'auto';
-        currentMode = null;
-        
-        [feedButton, cuddleButton].forEach(button => {
-            button.classList.remove('active');
-        });
-    }
-
-    // Function to interact with fish (feed or pet)
-    async function interactWithFish(fishElement, interactionType) {
-        try {
-            const username = getCookie('username');
-            if (!username) {
-                throw new Error('User not authenticated');
-            }
-
-            // Extract the fish ID from the element
-            const fishId = fishElement.getAttribute('alt');
-            const endpoint = `${API_URL}/user/${username}/${interactionType}/${fishId}`;
-
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to ${interactionType} fish`);
-            }
-
-            // Visual feedback for successful interaction
-            fishElement.classList.add('interaction-feedback');
-            setTimeout(() => {
-                fishElement.classList.remove('interaction-feedback');
-            }, 500);
-
-            // Reload fish data to update display
-            await loadUserFish();
-
-        } catch (error) {
-            console.error(`Error during fish ${interactionType}:`, error);
-            alert(`Failed to ${interactionType} fish. Please try again.`);
-        }
-    }
-    
-    // Add click handlers for the buttons
-    feedButton.addEventListener('click', () => {
-        if (currentMode === 'feed') {
-            resetCursor();
-            return;
-        }
-        
-        currentMode = 'feed';
-        setCustomCursor('./imgs/food.png', feedButton);
-    });
-    
-    cuddleButton.addEventListener('click', () => {
-        if (currentMode === 'cuddle') {
-            resetCursor();
-            return;
-        }
-        
-        currentMode = 'cuddle';
-        setCustomCursor('./imgs/petHand.png', cuddleButton);
-    });
-    
-    // Add click handler for the fish container
-    fishContainer.addEventListener('click', async (event) => {
-        // Only handle clicks on fish images
-        if (event.target.tagName === 'IMG' && currentMode) {
-            const interactionType = currentMode === 'feed' ? 'feed' : 'pet';
-            await interactWithFish(event.target, interactionType);
-            resetCursor();
-        }
-    });
-
-// leaderboard modal and buttons
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Get leaderboard modal and buttons
-    const leaderboard = document.getElementById('leaderboard');
-    const leaderboardButton = document.getElementById('leaderboardButton');
-    const closeLeaderboardButton = document.getElementById('closeLeaderboardButton');
-
-    // Open leaderboard modal
-    leaderboardButton.onclick = function () {
-        leaderboard.style.display = "block";
-    };
-
-    // Close leaderboard modal
-    closeLeaderboardButton.onclick = function () {
-        leaderboard.style.display = "none";
-    };
-
-    // Close leaderboard if clicking outside of it
-    window.onclick = function (event) {
-        if (event.target === leaderboard) {
-            leaderboard.style.display = "none";
-        }
-    };
-
-    // Fetch leaderboard data on load
-    fetchLeaderboardData();
-
-    // Update leaderboard every 5 seconds
-    setInterval(fetchLeaderboardData, 5000);
-});
-
 // Function to fetch leaderboard data
 async function fetchLeaderboardData() {
     try {
@@ -306,5 +256,3 @@ function updateLeaderboard(topLeader, coins, fishCount) {
 }
 
 
-    
-});

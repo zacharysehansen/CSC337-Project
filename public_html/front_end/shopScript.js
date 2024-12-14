@@ -24,7 +24,10 @@ var close = document.getElementById("closeShopButton");
 // when the user clicks on the button, open the modal
 button.onclick = function() {
   modal.style.display = "block";
+
+  console.log("shopButton")
 }
+
 
 // when the user clicks on the clsoe button, close the modal
 close.onclick = function() {

@@ -8,7 +8,6 @@ let leaderboardData = {
     fishCount: 5
 };
 
-// Endpoint to serve leaderboard data
 app.get('/leaderboard', (req, res) => {
     res.json(leaderboardData);
 });

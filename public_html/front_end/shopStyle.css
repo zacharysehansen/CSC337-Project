@@ -1,3 +1,10 @@
+/* 
+CSC 337 Final Project: Pocket Pond
+Team: Sameeka Maroli, Jordan Demler, Zachary Hansen
+Description: This CSS styles the shop modal in Pocket Pond, creating an interactive interface where players can buy fish and upgrades.
+ It includes slide-in animation and  design elements to ensure a visually engaging and user-friendly experience.
+*/ 
+
 /* Modal styling */
 #shopModal {
     display: none; /* none or else mermaid russ with haunt you */
