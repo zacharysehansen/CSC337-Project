@@ -231,8 +231,6 @@ function resetCursor() {
     });
 }
     
-<<<<<<< HEAD
-=======
     // Track the current interaction mode
     let currentMode = null;
     
@@ -436,7 +434,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(fetchLeaderboardData, 5000);
 });
 
->>>>>>> 74e4b2cc2e91c2addde96297130da230295b751f
 // Function to fetch leaderboard data
 async function fetchLeaderboardData() {
     try {
