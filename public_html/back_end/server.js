@@ -32,6 +32,21 @@ function releaseLock(userId) {
     lockMap.delete(userId);
 }
 
+function getFishCost(fishId) {
+    const fishPrices = {
+        sFish: 1,
+        cFish: 2,
+        bTang: 3,
+        eel: 4,
+        angel: 5,
+        angler: 6,
+        jelly: 7,
+        anchovy: 8,
+        clam: 9,
+    };
+    return fishPrices[fishId] || 0; // Default to 0 if fishId not found
+}
+
 // Helper function to update fish health based on beenFed and beenPet status
 function updateFishHealth(fish) {
     // If the fish has been both fed and pet, set health to 2
@@ -196,6 +211,33 @@ app.get('/user/:username/fish-types', async (req, res) => {
         res.status(error.status || 500).json({ error: error.message });
     }
 });
+
+app.post('/user/:username/buy-fish', async (req, res) => {
+    const { username } = req.params;
+    const { fishType } = req.body;
+    const fishCost = getFishCost(fishType); // uses the helper functionality
+    
+    try {
+        const user = await User.findOne({ username });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        if (user.coins < fishCost) {
+            return res.status(400).json({ error: 'You be broke!' });
+        }
+
+        user.coins -= fishCost;
+        const newFish = new Fish({ type: fishType, name: `${fishType} Fish` });
+        await newFish.save();
+
+        user.inventory.push(newFish);
+        await user.save();
+
+        res.json({ success: true, updatedCoins: user.coins });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 async function gracefulShutdown() {
     if (isShuttingDown) {

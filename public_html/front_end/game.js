@@ -179,18 +179,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to interact with fish (feed or pet)
     async function interactWithFish(fishElement, interactionType) {
         try {
+            // Log the start of interaction and basic info
+            console.log('Starting fish interaction:', {
+                interactionType,
+                fishId: fishElement.getAttribute('alt'),
+                fishPosition: fishElement.getBoundingClientRect()
+            });
+    
             const username = getCookie('username');
+            console.log('Username from cookie:', username);
+    
             if (!username) {
                 throw new Error('User not authenticated');
             }
-
-            // Extract the fish ID from the element
+    
             const fishId = fishElement.getAttribute('alt');
             const endpoint = `${API_URL}/user/${username}/${interactionType}/${fishId}`;
-
+            console.log('Making request to endpoint:', endpoint);
+    
             const response = await fetch(endpoint, {
                 method: 'POST',
                 credentials: 'include',
@@ -198,22 +206,88 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json'
                 }
             });
-
+    
+            console.log('Server response status:', response.status);
+            
             if (!response.ok) {
                 throw new Error(`Failed to ${interactionType} fish`);
             }
-
-            // Visual feedback for successful interaction
+    
+            // Log the fish data before updating
+            console.log('Current fish element state:', {
+                classList: Array.from(fishElement.classList),
+                position: fishElement.getBoundingClientRect(),
+                attributes: {
+                    alt: fishElement.alt,
+                    id: fishElement.id,
+                    health: fishElement.getAttribute('data-health')
+                }
+            });
+    
+            // Visual feedback logging
+            console.log('Adding interaction feedback class');
             fishElement.classList.add('interaction-feedback');
-            setTimeout(() => {
-                fishElement.classList.remove('interaction-feedback');
-            }, 500);
-
-            // Reload fish data to update display
+    
+            // Get updated fish data
+            const fishResponse = await fetch(`${API_URL}/user/${username}/fish-types`, {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            const userData = await fishResponse.json();
+            console.log('Updated fish data received:', userData);
+            
+            const updatedFish = userData.fishTypes.find(fish => fish.name === fishId);
+            console.log('Found matching fish:', updatedFish);
+            
+            if (updatedFish && updatedFish.health === 1) {
+                console.log('Creating coin for fish with health 1');
+                
+                const fishRect = fishElement.getBoundingClientRect();
+                const aquarium = document.getElementById('aquarium');
+                const aquariumRect = aquarium.getBoundingClientRect();
+    
+                console.log('Position calculations:', {
+                    fishRect,
+                    aquariumRect,
+                    calculatedLeft: fishRect.left - aquariumRect.left + (fishRect.width / 2) - 16,
+                    calculatedTop: fishRect.top - aquariumRect.top + fishRect.height
+                });
+    
+                const coin = document.createElement('img');
+                coin.src = './img/coin.png';
+                coin.className = 'coin';
+                
+                coin.style.left = `${fishRect.left - aquariumRect.left + (fishRect.width / 2) - 16}px`;
+                coin.style.top = `${fishRect.top - aquariumRect.top + fishRect.height}px`;
+                
+                console.log('Created coin element:', {
+                    position: {
+                        left: coin.style.left,
+                        top: coin.style.top
+                    },
+                    className: coin.className
+                });
+                
+                aquarium.appendChild(coin);
+                
+                coin.addEventListener('animationend', () => {
+                    console.log('Coin animation completed, removing element');
+                    coin.remove();
+                });
+            }
+    
             await loadUserFish();
-
+            console.log('Fish data reloaded');
+    
         } catch (error) {
-            console.error(`Error during fish ${interactionType}:`, error);
+            console.error('Detailed error information:', {
+                error,
+                errorMessage: error.message,
+                errorStack: error.stack
+            });
             alert(`Failed to ${interactionType} fish. Please try again.`);
         }
     }
