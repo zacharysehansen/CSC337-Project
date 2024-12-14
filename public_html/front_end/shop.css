@@ -12,7 +12,7 @@
     /* Use grid to make a nice layout of fish */
     display: grid;
     /* Make 4 equal columns */
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     /* Add some space between grid items */
     gap: 15px;
     /* Add space around the edges */
@@ -66,4 +66,8 @@
 /* Change button color on hover */
 .nav-link:hover {
     background-color: #0052a3;
+}
+
+.price {
+    color: white;
 }
