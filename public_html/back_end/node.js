@@ -6,7 +6,7 @@ const { MongoClient } = require("mongodb");
 
 const uri = "mongodb://64.23.229.25:27017"
 const dbName = "fishtank";
-const collectionName = "";
+const collectionName = "27017";
 
 
 async function getLeaderboard() {
