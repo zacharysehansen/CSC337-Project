@@ -152,6 +152,20 @@ async function loadUserFish() {
             console.log(`Added fish: ${fish.type} named ${fish.name}`);
         });
         
+        const coinsData = await fetch(`${API_URL}/user/${username}/coins`, {
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!coinsData.ok) {
+            throw new Error(`HTTP error! status: ${coinsData.status}`);
+        }
+
+        const coins = await coinsData.json();
+        let counter = document.getElementById("coinsCounter");
+        counter.innerText = String(coins.coins);
         initializeAquarium();
         
     } catch (error) {
