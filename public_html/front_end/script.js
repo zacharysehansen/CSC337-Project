@@ -5,7 +5,7 @@
 // and a menu for navigation. It uses keyframes to add effects, and user authentication forms for login and signup. 
 
 
-const API_URL = 'http://127.0.0.1:3000'; // Backend URL
+const API_URL = 'http://64.23.229.25:3000' // Backend URL
 
 document.addEventListener('DOMContentLoaded', function() {
     goBack();
