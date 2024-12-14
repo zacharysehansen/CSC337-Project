@@ -222,78 +222,74 @@ function getFishDetails(fishType) {
     return fishConfigs[fishType] || null;
 }
 
-// Updated buy-fish route that properly integrates with the models
 app.post('/user/:username/buy-fish', async (req, res) => {
     const { username } = req.params;
     const { fishType } = req.body;
-    
+   
     try {
-        // Start a session for atomic operations
         const session = await mongoose.startSession();
         session.startTransaction();
-        
+       
         try {
-            // Get fish details including cost
             const fishDetails = getFishDetails(fishType);
             if (!fishDetails) {
                 throw { status: 400, message: 'Invalid fish type' };
             }
-            
-            // Find user and verify they exist
+           
             const user = await User.findOne({ username }).session(session);
             if (!user) {
                 throw { status: 404, message: 'User not found' };
             }
-            
-            // Check if user has enough coins
+           
             if (user.coins < fishDetails.cost) {
                 throw { status: 400, message: 'Insufficient coins' };
             }
-            
-            // Create new fish document following the schema
+           
             const newFish = new Fish({
                 name: `${fishDetails.name}`,
                 type: fishType,
-                health: 0,          // Starting health per schema default
-                beenFed: false,     // Per schema default
-                beenPet: false,     // Per schema default
-                accessories: []      // Empty array per schema default
+                health: 0,
+                beenFed: false,
+                beenPet: false,
+                accessories: []
             });
-            
-            // Save the new fish document
+           
             await newFish.save({ session });
-            
-            // Update user's coins and add fish to inventory
+           
             user.coins -= fishDetails.cost;
             user.inventory.push(newFish._id);
+
+            const totalFish = user.inventory.length;
+            const newLevel = Math.floor(totalFish / 2) + 1;
+            if (newLevel > user.level) {
+                user.level = newLevel;
+            }
+
             await user.save({ session });
-            
-            // Commit the transaction
+           
             await session.commitTransaction();
-            
-            // Return updated user state
+           
             const updatedUser = await User.findOne({ username })
                 .populate('inventory')
                 .session(session);
-            
+           
             res.json({
                 success: true,
                 updatedCoins: user.coins,
                 newFish: newFish,
-                inventory: updatedUser.inventory
+                inventory: updatedUser.inventory,
+                level: user.level,
+                levelUp: newLevel > user.level - 1
             });
-            
+           
         } catch (error) {
-            // If anything fails, roll back the transaction
             await session.abortTransaction();
             throw error;
         } finally {
-            // End the session
             session.endSession();
         }
-        
+       
     } catch (error) {
-        // Handle any errors that occurred
         console.error('Error in buy-fish route:', error);
         res.status(error.status || 500).json({
             error: error.message || 'Internal server error',
@@ -418,6 +414,36 @@ app.post('/signup', async (req, res) => {
         res.status(500).json({
             error: 'Server error during signup',
             details: error.message,
+        });
+    }
+});
+
+app.get('/user/:username/level', async (req, res) => {
+    const { username } = req.params;
+
+    try {
+        const user = await User.findOne({ username });
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            username: user.username,
+            level: user.level,
+            totalFish: user.inventory.length
+        });
+
+    } catch (error) {
+        console.error('Error fetching user level:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error fetching user level',
+            details: error.message
         });
     }
 });
