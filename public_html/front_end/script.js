@@ -5,7 +5,7 @@
 // and a dynamic bubble animation. It includes functions for setting and retrieving cookies, handling form submissions, and interacting with a 
 // backend API to validate users.
 
-const API_URL = '64.23.229.25:3000'; // Backend URL
+const API_URL = 'http://64.23.229.25:3000'; // Backend URL
 
 document.addEventListener('DOMContentLoaded', function() {
     goBack();
