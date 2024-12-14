@@ -372,7 +372,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Signup route: Sameeka 
+// Signup route: Sameeka trying to implement it so it does not get wiped from the database
 app.post('/signup', async (req, res) => {
     const { fullName, email, username } = req.body;
     console.log('Received signup request:', { fullName, email, username });
@@ -444,8 +444,8 @@ app.get('/leaderboard/top3', async (req, res) => {
         });
     }
 });
-<<<<<<< HEAD
-=======
+
+//zach and jordan working on it
 
 app.post('/user/:username/coins', async (req, res) => {
     const { username } = req.body;
@@ -475,4 +475,3 @@ app.post('/user/:username/coins', async (req, res) => {
         });
     }
 });
->>>>>>> 6d762cc013200142c1adcafe0f4449bc9d56e7ec
