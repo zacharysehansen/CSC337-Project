@@ -224,70 +224,54 @@ function getFishDetails(fishType) {
 
 app.post('/user/:username/:fishType/buy-fish', async (req, res) => {
     const username = req.params.username;
-    const  fishType  = req.params.fishType;
+    const fishType = req.params.fishType;
    
     try {
-        const session = await mongoose.startSession();
-        session.startTransaction();
-       
-        try {
-            const fishDetails = getFishDetails(fishType);
-            if (!fishDetails) {
-                throw { status: 400, message: 'Invalid fish type' };
-            }
-           
-            const user = await User.findOne({username}).session(session);
-            if (!user) {
-                throw { status: 404, message: 'User not found' };
-            }
-           
-            if (user.coins < fishDetails.cost) {
-                throw { status: 400, message: 'Insufficient coins' };
-            }
-           
-            const newFish = new Fish({
-                name: `${fishDetails.name}`,
-                type: fishType,
-                health: 0,
-                beenFed: false,
-                beenPet: false,
-                accessories: []
-            });
-           
-            await newFish.save({ session });
-           
-            user.coins -= fishDetails.cost;
-            user.inventory.push(newFish._id);
-
-            const totalFish = user.inventory.length;
-            const newLevel = Math.floor(totalFish / 2) + 1;
-            if (newLevel > user.level) {
-                user.level = newLevel;
-            }
-
-            await user.save({ session });
-           
-            await session.commitTransaction();
-           
-            const updatedUser = await User.findOne({ username })
-                .populate('inventory')
-                .session(session);
-           
-            res.json({
-                success: true,
-                updatedCoins: user.coins,
-                newFish: newFish,
-                inventory: updatedUser.inventory,
-                level: user.level,
-                levelUp: newLevel > user.level - 1
-            });
-           
-        } catch (error) {
-            await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
+        const fishDetails = getFishDetails(fishType);
+        if (!fishDetails) {
+            throw { status: 400, message: 'Invalid fish type' };
         }
+       
+        const user = await User.findOne({username});
+        if (!user) {
+            throw { status: 404, message: 'User not found' };
+        }
+       
+        if (user.coins < fishDetails.cost) {
+            throw { status: 400, message: 'Insufficient coins' };
+        }
+       
+        const newFish = new Fish({
+            name: `${fishDetails.name}`,
+            type: fishType,
+            health: 0,
+            beenFed: false,
+            beenPet: false,
+            accessories: []
+        });
+       
+        await newFish.save();
+       
+        user.coins -= fishDetails.cost;
+        user.inventory.push(newFish._id);
+        const totalFish = user.inventory.length;
+        const newLevel = Math.floor(totalFish / 2) + 1;
+        if (newLevel > user.level) {
+            user.level = newLevel;
+        }
+        await user.save();
+       
+        const updatedUser = await User.findOne({ username })
+            .populate('inventory');
+       
+        res.json({
+            success: true,
+            updatedCoins: user.coins,
+            newFish: newFish,
+            inventory: updatedUser.inventory,
+            level: user.level,
+            levelUp: newLevel > user.level - 1
+        });
        
     } catch (error) {
         console.error('Error in buy-fish route:', error);
