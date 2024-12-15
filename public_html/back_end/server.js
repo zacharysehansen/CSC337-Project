@@ -236,7 +236,7 @@ app.post('/user/:username/:fishType/buy-fish', async (req, res) => {
         if (!user) {
             throw { status: 404, message: 'User not found' };
         }
-       
+       console.log(user.coins);
         if (user.coins < fishDetails.cost) {
             throw { status: 400, message: 'Insufficient coins' };
         }

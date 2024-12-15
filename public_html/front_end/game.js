@@ -182,7 +182,9 @@ async function loadUserFish() {
             throw new Error(`HTTP error! status: ${coinsData.status}`);
         }
 
-
+        const coin = await coinsData.json();
+        let coincounter = document.getElementById("coinCounter");
+        coincounter.innerText = coin.coin;
         initializeAquarium();
         
     } catch (error) {
