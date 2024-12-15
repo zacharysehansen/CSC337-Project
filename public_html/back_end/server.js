@@ -448,8 +448,7 @@ app.get('/leaderboard/top3', async (req, res) => {
 //zach and jordan working on it
 
 app.post('/user/:username/coins', async (req, res) => {
-    const username = req.username;
-
+    const username = req.params.username;
     try {
         const user = await User.findOne({ username });
         
