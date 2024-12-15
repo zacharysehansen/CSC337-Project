@@ -209,14 +209,14 @@ function getFishDetails(fishType) {
     // Map of fish types to their basic configurations
     const fishConfigs = {
         startFish: { name: 'startFish', cost: 10 },
-        clownFish: { name: 'clownFish', cost: 20 },
-        blueTang: { name: 'blueTang', cost: 30 },
+        clownFish: { name: 'clownFish', cost: 70 },
+        blueTang: { name: 'blueTang', cost: 50 },
         eel: { name: 'eel', cost: 40 },
-        angel: { name: 'angel', cost: 50 },
-        angler: { name: 'angler', cost: 60 },
-        jellyfish: { name: 'jellyfish', cost: 70 },
-        anchovy: { name: 'anchovy', cost: 80 },
-        clam: { name: 'clam', cost: 90 }
+        angel: { name: 'angel', cost: 30 },
+        angler: { name: 'angler', cost: 80 },
+        jellyfish: { name: 'jellyfish', cost: 90 },
+        anchovy: { name: 'anchovy', cost: 20 },
+        clam: { name: 'clam', cost: 60 }
     };
     
     return fishConfigs[fishType] || null;
