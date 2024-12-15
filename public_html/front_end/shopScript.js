@@ -1,9 +1,11 @@
 /*
-Team: Jordan Demler
-CSC 337: Pocket Pond
-This JavaScript file manages the functionality for the shop in the index.html page, using a modal box to create a pop-up shop interface. 
-It handles the initial loading of the shop, purchasing fish, and integrates a modal dialog adapted from W3Schools' tutorial on modals.
-*/
+ * Team: Jordan Demler
+ * CSC 337: Pocket Pond
+ * This JavaScript file manages the functionality for the shop in the index.html page, 
+ * using a modal box to create a pop-up shop interface.
+ * It handles the initial loading of the shop, purchasing fish, and integrates 
+ * a modal dialog adapted from W3Schools' tutorial on modals.
+ */
 
 // Get the container holding all fish content
 const fishContent = document.getElementById('fishContent');
@@ -23,8 +25,6 @@ const fishPrices = {
 
 const API_URL = "http://64.23.229.25:3000";
 
-let currentUser = null;
-
 function checkAuthentication() {
     const username = getCookie('username');
     return username;
@@ -32,33 +32,29 @@ function checkAuthentication() {
 
 // Add click event listeners to all fish images in the shop
 function initializeShopListeners() {
-    // get all fish image containers
+    // Get all fish image containers
     const fishItems = document.querySelectorAll('.fish-item');
-
+    
     fishItems.forEach(fishImage => {
-        fishImage.addEventListener('click', async () => {
-	    // get all fish items
-	    const img = fishImage.querySelector('img');
-	    if (img) {
-		const fishtype = img.alt;
-		
-		const price = fishPrices[fishType];
-		
-		img.addEventListener('click', () => {
-		    handlerFishPurchase(fishType, price);
-		});
-	    }
-	});
+        const img = fishImage.querySelector('img');
+        if (img) {
+            const fishType = img.alt;
+            const price = fishPrices[fishType];
+            
+            img.addEventListener('click', () => {
+                handleFishPurchase(fishType, price);
+            });
+        }
+    });
 }
 
 // Function to handle fish purchase attempts
 async function handleFishPurchase(fishType, price) {
-    // get current user
     const currentUser = checkAuthentication();
-
+    
     try {
         // Make API call to purchase fish
-        const response = await fetch('${ API_URL }/user/${currentUser}/buy-fish`, {
+        const response = await fetch(`${API_URL}/user/${currentUser}/buy-fish`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -67,15 +63,15 @@ async function handleFishPurchase(fishType, price) {
         });
 
         const data = await response.json();
-
+        
         if (!data.success) {
             throw new Error(data.error || 'Failed to purchase fish');
         }
         
         // Add fish to aquarium
         addFishToAquarium(fishType);
-	
-	 // Show success message
+        
+        // Show success message
         alert(`Successfully purchased ${fishType}!`);
         
     } catch (error) {
