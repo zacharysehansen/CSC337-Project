@@ -208,15 +208,15 @@ app.get('/user/:username/fish-types', async (req, res) => {
 function getFishDetails(fishType) {
     // Map of fish types to their basic configurations
     const fishConfigs = {
-        startFish: { name: 'startFish', cost: 1 },
-        clownFish: { name: 'clownFish', cost: 2 },
-        blueTang: { name: 'blueTang', cost: 3 },
-        eel: { name: 'eel', cost: 4 },
-        angel: { name: 'angle', cost: 5 },
-        angler: { name: 'angler', cost: 6 },
-        jellyfish: { name: 'jellyfish', cost: 7 },
-        anchovy: { name: 'anchovy', cost: 8 },
-        clam: { name: 'clam', cost: 9 }
+        startFish: { name: 'startFish', cost: 10 },
+        clownFish: { name: 'clownFish', cost: 20 },
+        blueTang: { name: 'blueTang', cost: 30 },
+        eel: { name: 'eel', cost: 40 },
+        angel: { name: 'angel', cost: 50 },
+        angler: { name: 'angler', cost: 60 },
+        jellyfish: { name: 'jellyfish', cost: 70 },
+        anchovy: { name: 'anchovy', cost: 80 },
+        clam: { name: 'clam', cost: 90 }
     };
     
     return fishConfigs[fishType] || null;

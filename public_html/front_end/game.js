@@ -155,6 +155,22 @@ async function loadUserFish() {
             console.log(`Added fish: ${fish.type} named ${fish.name}`);
         });
         
+        const LevelData = await fetch(`${API_URL}/user/${username}/level/top3`, {
+            method: 'POST',  
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!LevelData.ok) {
+            throw new Error(`HTTP error! status: ${coinsData.status}`);
+        }
+
+        const level = await LevelData.json();
+        let counter = document.getElementById("levelCounter");
+        counter.innerText = level.topPlayers[0].level;
+
         const coinsData = await fetch(`${API_URL}/user/${username}/coins`, {
             method: 'POST',  
             credentials: 'include',
@@ -167,10 +183,7 @@ async function loadUserFish() {
             throw new Error(`HTTP error! status: ${coinsData.status}`);
         }
 
-        const coins = await coinsData.json();
-        console.log(coins);
-        let counter = document.getElementById("coinCounter");
-        counter.innerText = coins.coins;
+
         initializeAquarium();
         
     } catch (error) {
