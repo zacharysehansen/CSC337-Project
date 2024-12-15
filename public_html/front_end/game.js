@@ -155,12 +155,13 @@ async function loadUserFish() {
         });
         
         const coinsData = await fetch(`${API_URL}/user/${username}/coins`, {
+            method: 'POST',  
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-
+        
         if (!coinsData.ok) {
             throw new Error(`HTTP error! status: ${coinsData.status}`);
         }
