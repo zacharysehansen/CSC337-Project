@@ -448,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to fetch leaderboard data from mongoDB
 async function fetchLeaderboardData() {
     try {
-        const response = await fetch(`${API_URL}/leaderboard`);
+        const response = await fetch(`${API_URL}/leaderboard/top3`);
         if (!response.ok) {
             throw new Error("Failed to fetch leaderboard data");
         }
