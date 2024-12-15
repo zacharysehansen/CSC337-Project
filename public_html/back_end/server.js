@@ -208,7 +208,7 @@ app.get('/user/:username/fish-types', async (req, res) => {
 function getFishDetails(fishType) {
     // Map of fish types to their basic configurations
     const fishConfigs = {
-        starterFish: { name: 'starterFish', cost: 1 },
+        starterFish: { name: 'startFish', cost: 1 },
         clownFish: { name: 'clownFish', cost: 2 },
         blueTang: { name: 'blueTang', cost: 3 },
         eel: { name: 'eel', cost: 4 },
