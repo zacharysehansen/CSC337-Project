@@ -476,7 +476,7 @@ app.post('/user/:username/level', async (req, res) => {
         res.json({
             success: true,
             username: user.username,
-            coins: user.level
+            level: user.level
         });
     } catch (error) {
         console.error('Error fetching user coins:', error);
