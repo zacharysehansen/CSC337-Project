@@ -468,4 +468,15 @@ function updateLeaderboard(player1, player2, player3) {
     document.getElementById('leaderFish').textContent = player1.fishCount;
 }
 
+var button = document.getElementById("shopButton");
+
+var close = document.getElementById("closeShopButton");
+
+// when the user clicks on the button, open the modal
+button.onclick = function() {
+    location.href = "shop.html";
+
+  console.log("shopButton")
+}
+
 

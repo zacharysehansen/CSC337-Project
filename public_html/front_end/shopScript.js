@@ -5,18 +5,6 @@ This JavaScript file manages the functionality for the shop in the index.html pa
 It handles the initial loading of the shop, purchasing fish, and integrates a modal dialog adapted from W3Schools' tutorial on modals.
 */
 
-
-var button = document.getElementById("shopButton");
-
-var close = document.getElementById("closeShopButton");
-
-// when the user clicks on the button, open the modal
-button.onclick = function() {
-    location.href = "shop.html";
-
-  console.log("shopButton")
-}
-
 // Get the container holding all fish content
 const fishContent = document.getElementById('fishContent');
 
