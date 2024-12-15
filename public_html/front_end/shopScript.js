@@ -25,9 +25,25 @@ const fishPrices = {
 
 const API_URL = "http://64.23.229.25:3000";
 
+function getCookie(name) {
+  const cookieName = name + "=";
+  const cookies = document.cookie.split(';');
+  for(let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
+      if (cookie.indexOf(cookieName) === 0) {
+          return cookie.substring(cookieName.length, cookie.length);
+      }
+  }
+  return "";
+}
+
 function checkAuthentication() {
-    const username = getCookie('username');
-    return username;
+  const username = getCookie('username');
+  if (!username) {
+      window.location.href = 'game.html';
+      return null;
+  }
+  return username;
 }
 
 // Add click event listeners to all fish images in the shop
@@ -78,6 +94,7 @@ async function handleFishPurchase(fishType, price) {
         alert(error.message);
     }
 }
+
 
 // Initialize the listeners when the document is ready
 document.addEventListener('DOMContentLoaded', initializeShopListeners);
