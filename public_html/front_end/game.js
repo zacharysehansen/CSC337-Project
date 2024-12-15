@@ -456,7 +456,7 @@ async function fetchLeaderboardData() {
         }
 
         const data = await response.json();
-
+        console.log(data);
         updateLeaderboard(data.topLeader, data.coins, data.fishCount);
     } catch (error) {
         console.error("Error fetching leaderboard data:", error);
