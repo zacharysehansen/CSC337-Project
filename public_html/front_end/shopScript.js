@@ -58,19 +58,19 @@ function initializeShopListeners() {
             const price = fishPrices[fishType];
             
             img.addEventListener('click', () => {
-                handleFishPurchase(fishType, price);
+                handleFishPurchase(fishType);
             });
         }
     });
 }
 
 // Function to handle fish purchase attempts
-async function handleFishPurchase(fishType, price) {
+async function handleFishPurchase(fishType) {
     const currentUser = checkAuthentication();
     
     try {
         // Make API call to purchase fish
-        const response = await fetch(`${API_URL}/user/${currentUser}/buy-fish`, {
+        const response = await fetch(`${API_URL}/user/${currentUser}/${fishType}/buy-fish`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -83,9 +83,6 @@ async function handleFishPurchase(fishType, price) {
         if (!data.success) {
             throw new Error(data.error || 'Failed to purchase fish');
         }
-        
-        // Add fish to aquarium
-        addFishToAquarium(fishType);
         
         // Show success message
         alert(`Successfully purchased ${fishType}!`);

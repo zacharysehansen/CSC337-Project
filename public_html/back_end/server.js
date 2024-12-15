@@ -222,9 +222,9 @@ function getFishDetails(fishType) {
     return fishConfigs[fishType] || null;
 }
 
-app.post('/user/:username/buy-fish', async (req, res) => {
+app.post('/user/:username/:fishType/buy-fish', async (req, res) => {
     const username = req.params.username;
-    const { fishType } = req.body;
+    const  fishType  = req.params.fishType;
    
     try {
         const session = await mongoose.startSession();
@@ -236,7 +236,7 @@ app.post('/user/:username/buy-fish', async (req, res) => {
                 throw { status: 400, message: 'Invalid fish type' };
             }
            
-            const user = await User.findOne(username).session(session);
+            const user = await User.findOne({username}).session(session);
             if (!user) {
                 throw { status: 404, message: 'User not found' };
             }
