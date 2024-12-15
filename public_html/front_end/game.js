@@ -155,8 +155,7 @@ async function loadUserFish() {
             console.log(`Added fish: ${fish.type} named ${fish.name}`);
         });
         
-        const LevelData = await fetch(`${API_URL}/leaderboard/top3`, {
-            method: 'POST',  
+        const LevelData = await fetch(`${API_URL}/leaderboard/top3`, { 
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
