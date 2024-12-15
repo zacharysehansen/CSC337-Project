@@ -164,7 +164,7 @@ async function loadUserFish() {
         });
         
         if (!LevelData.ok) {
-            throw new Error(`HTTP error! status: ${coinsData.status}`);
+            throw new Error(`HTTP error! status: ${LevelData.status}`);
         }
 
         const level = await LevelData.json();
