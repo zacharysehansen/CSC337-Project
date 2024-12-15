@@ -457,16 +457,18 @@ async function fetchLeaderboardData() {
 
         const data = await response.json();
         console.log(data);
-        updateLeaderboard(data.topLeader, data.coins, data.fishCount);
+        updateLeaderboard(data.topPlayers[0], data.topPlayers[1], data.topPlayers[2]);
     } catch (error) {
         console.error("Error fetching leaderboard data:", error);
     }
 }
 
-function updateLeaderboard(topLeader, coins, fishCount) {
-    document.getElementById('topLeader').textContent = topLeader;
-    document.getElementById('leaderCoins').textContent = coins;
-    document.getElementById('leaderFish').textContent = fishCount;
+function updateLeaderboard(player1, player2, player3) {
+    document.getElementById('topLeader').textContent = player1.username;
+    document.getElementById('leaderLevel').textContent = player1.level;
+    document.getElementById('leaderFish').textContent = player1.fishCount;
+    console.log(player2);
+    console.log(player3);
 }
 
 
