@@ -450,7 +450,7 @@ app.get('/leaderboard/top3', async (req, res) => {
 app.post('/user/:username/coins', async (req, res) => {
     const username = req.params.username;
     try {
-        const user = await User.findOne({ username });
+        const user = await User.findOne(username);
         
         if (!user) {
             return res.status(404).json({
