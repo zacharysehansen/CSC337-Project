@@ -449,22 +449,23 @@ app.get('/leaderboard/top3', async (req, res) => {
 
 app.post('/user/:username/coins', async (req, res) => {
     const username = req.params.username;
+    console.log('Looking for username:', username); // Debug log
+    
     try {
-        const user = await User.findOne(username);
-        
+        const user = await User.findOne({ username: username }); // Being explicit with the match
+        console.log('Found user:', user); // Debug log
+       
         if (!user) {
             return res.status(404).json({
                 success: false,
                 error: 'User not found'
             });
         }
-
         res.json({
             success: true,
             username: user.username,
             coins: user.coins
         });
-
     } catch (error) {
         console.error('Error fetching user coins:', error);
         res.status(500).json({

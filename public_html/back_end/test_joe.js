@@ -15,7 +15,7 @@ const User = mongoose.model('User', userSchema);
 async function verifyUser() {
     try {
         // Read the username we saved earlier
-        const TEST_USERNAME = 'joe';
+        const TEST_USERNAME = 'zackie';
         
         // Connect to the database
         console.log('Connecting to MongoDB...');
