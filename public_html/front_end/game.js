@@ -168,8 +168,8 @@ async function loadUserFish() {
         }
 
         const level = await LevelData.json();
-        let counter = document.getElementById("levelCounter");
-        counter.innerText = level.level;
+        let textcounter = document.getElementById("levelCounter");
+        textcounter.innerText = level.level;
 
         const coinsData = await fetch(`${API_URL}/user/${username}/coins`, {
             method: 'POST',  
