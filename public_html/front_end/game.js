@@ -456,7 +456,6 @@ async function fetchLeaderboardData() {
         }
 
         const data = await response.json();
-        console.log(data);
         updateLeaderboard(data.topPlayers[0], data.topPlayers[1], data.topPlayers[2]);
     } catch (error) {
         console.error("Error fetching leaderboard data:", error);
@@ -467,8 +466,6 @@ function updateLeaderboard(player1, player2, player3) {
     document.getElementById('topLeader').textContent = player1.username;
     document.getElementById('leaderLevel').textContent = player1.level;
     document.getElementById('leaderFish').textContent = player1.fishCount;
-    console.log(player2);
-    console.log(player3);
 }
 
 
