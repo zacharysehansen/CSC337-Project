@@ -3,7 +3,7 @@
 //Description: This script is the core logic for the Pocket Pond game, managing user interactions, aquarium animations, and backend integration.
 
 
-const API_URL = 'http://64.23.229.25:3000';
+
 //const API_URL= 'http://127.0.0.1:3000';
 
 let animationFrameId = null;
