@@ -168,7 +168,7 @@ async function loadUserFish() {
 
         const coins = await coinsData.json();
         console.log(coins);
-        let counter = document.getElementById("coinsCounter");
+        let counter = document.getElementById("coinCounter");
         counter.innerText = coins.coins;
         initializeAquarium();
         
