@@ -108,8 +108,7 @@ app.post('/user/:username/feed/:fishName', async (req, res) => {
         }
 
         console.log("Fish found!");
-        
-        // Update the fish's properties
+        user.coins += 10;
         fish.beenFed = true;
         updateFishHealth(fish);
         
