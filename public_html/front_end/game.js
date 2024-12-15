@@ -155,7 +155,8 @@ async function loadUserFish() {
             console.log(`Added fish: ${fish.type} named ${fish.name}`);
         });
         
-        const LevelData = await fetch(`${API_URL}/leaderboard/top3`, { 
+        const LevelData = await fetch(`${API_URL}/user/${username}/level`, { 
+            method: 'POST', 
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
@@ -168,7 +169,7 @@ async function loadUserFish() {
 
         const level = await LevelData.json();
         let counter = document.getElementById("levelCounter");
-        counter.innerText = level.topPlayers[0].level;
+        counter.innerText = level.level;
 
         const coinsData = await fetch(`${API_URL}/user/${username}/coins`, {
             method: 'POST',  
