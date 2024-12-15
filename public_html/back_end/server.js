@@ -143,7 +143,7 @@ app.post('/user/:username/pet/:fishName', async (req, res) => {
         // Instead of using findById, we search directly in the user's inventory
         // using the fish name as our search criterion
         const fish = user.inventory.find(f => f.name === fishName);
-        
+        user.coins += 10;
         // If we can't find a fish with that name in the user's inventory,
         // we throw an error
         if (!fish) {
