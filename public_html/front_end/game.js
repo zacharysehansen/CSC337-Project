@@ -102,7 +102,7 @@ function getCookie(name) {
 function checkAuthentication() {
     const username = getCookie('username');
     if (!username) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
         return null;
     }
     return username;
@@ -125,6 +125,7 @@ async function loadUserFish() {
         }
 
         const userData = await response.json();
+
         const fishContainer = document.getElementById('fishContainer');
         fishContainer.innerHTML = '';
         

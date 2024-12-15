@@ -10,30 +10,55 @@ const fishContent = document.getElementById('fishContent');
 
 // Fish prices lookup object - matches backend prices
 const fishPrices = {
-    sFish: 1,
-    cFish: 2,
-    bTang: 3,
+    starterFish: 1,
+    clownFish: 2,
+    blueTang: 3,
     eel: 4,
     angel: 5,
     angler: 6,
-    jelly: 7,
+    jellyfish: 7,
     anchovy: 8,
     clam: 9
 };
 
+const API_URL = "http://64.23.229.25:3000";
+
+let currentUser = null;
+
+function checkAuthentication() {
+    const username = getCookie('username');
+    return username;
+}
+
+// Add click event listeners to all fish images in the shop
+function initializeShopListeners() {
+    // get all fish image containers
+    const fishItems = document.querySelectorAll('.fish-item');
+
+    fishItems.forEach(fishImage => {
+        fishImage.addEventListener('click', async () => {
+	    // get all fish items
+	    const img = fishImage.querySelector('img');
+	    if (img) {
+		const fishtype = img.alt;
+		
+		const price = fishPrices[fishType];
+		
+		img.addEventListener('click', () => {
+		    handlerFishPurchase(fishType, price);
+		});
+	    }
+	});
+}
+
 // Function to handle fish purchase attempts
 async function handleFishPurchase(fishType, price) {
-    // Get current user info from localStorage or another source
-    const currentUser = localStorage.getItem('currentUser');
-    
-    if (!currentUser) {
-        alert('Please log in to purchase fish');
-        return;
-    }
+    // get current user
+    const currentUser = checkAuthentication();
 
     try {
         // Make API call to purchase fish
-        const response = await fetch(`http://localhost:3000/user/${currentUser}/buy-fish`, {
+        const response = await fetch('${ API_URL }/user/${currentUser}/buy-fish`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -43,61 +68,20 @@ async function handleFishPurchase(fishType, price) {
 
         const data = await response.json();
 
-        if (!response.ok) {
+        if (!data.success) {
             throw new Error(data.error || 'Failed to purchase fish');
         }
-
-        // Update the displayed coin amount with the new balance
-        const coinDisplay = document.getElementById('coinDisplay');
-        if (coinDisplay) {
-            coinDisplay.textContent = data.updatedCoins;
-        }
-
-        // Show success message
-        alert(`Successfully purchased ${fishType}!`);
         
-        // Optionally refresh the fish tank display
-        // You might want to call a function here to update the fish tank
+        // Add fish to aquarium
+        addFishToAquarium(fishType);
+	
+	 // Show success message
+        alert(`Successfully purchased ${fishType}!`);
         
     } catch (error) {
         alert(error.message);
     }
 }
 
-// Add click event listeners to all fish images in the shop
-function initializeShopListeners() {
-    // Get all fish image containers
-    const fishImages = fishContent.querySelectorAll('.fish-image');  // Adjust selector based on your HTML structure
-
-    fishImages.forEach(fishImage => {
-        fishImage.addEventListener('click', async () => {
-            // Get fish type from data attribute or ID
-            const fishType = fishImage.dataset.fishType;  // Make sure to add data-fish-type to your HTML
-            const price = fishPrices[fishType];
-
-            if (!price) {
-                alert('Invalid fish type');
-                return;
-            }
-
-            // Get current user's coins
-            const coinDisplay = document.getElementById('coinDisplay');
-            const currentCoins = parseInt(coinDisplay?.textContent || '0');
-
-            // Check if user can afford the fish
-            if (currentCoins < price) {
-                alert(`You need ${price} coins to buy this fish. You only have ${currentCoins} coins.`);
-                return;
-            }
-
-            // If they can afford it, attempt to purchase
-            await handleFishPurchase(fishType, price);
-        });
-    });
-}
-
 // Initialize the listeners when the document is ready
 document.addEventListener('DOMContentLoaded', initializeShopListeners);
-
-
-

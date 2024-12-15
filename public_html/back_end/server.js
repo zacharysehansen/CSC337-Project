@@ -208,22 +208,22 @@ app.get('/user/:username/fish-types', async (req, res) => {
 function getFishDetails(fishType) {
     // Map of fish types to their basic configurations
     const fishConfigs = {
-        sFish: { name: 'Small Fish', cost: 1 },
-        cFish: { name: 'Colorful Fish', cost: 2 },
-        bTang: { name: 'Blue Tang', cost: 3 },
-        eel: { name: 'Electric Eel', cost: 4 },
-        angel: { name: 'Angelfish', cost: 5 },
-        angler: { name: 'Anglerfish', cost: 6 },
-        jelly: { name: 'Jellyfish', cost: 7 },
-        anchovy: { name: 'Anchovy', cost: 8 },
-        clam: { name: 'Giant Clam', cost: 9 }
+        starterFish: { name: 'starterFish', cost: 1 },
+        clownFish: { name: 'clownFish', cost: 2 },
+        blueTang: { name: 'blueTang', cost: 3 },
+        eel: { name: 'eel', cost: 4 },
+        angel: { name: 'angle', cost: 5 },
+        angler: { name: 'angler', cost: 6 },
+        jellyfish: { name: 'jellyfish', cost: 7 },
+        anchovy: { name: 'anchovy', cost: 8 },
+        clam: { name: 'clam', cost: 9 }
     };
     
     return fishConfigs[fishType] || null;
 }
 
 app.post('/user/:username/buy-fish', async (req, res) => {
-    const { username } = req.params;
+    const username = req.params.username;
     const { fishType } = req.body;
    
     try {
@@ -236,7 +236,7 @@ app.post('/user/:username/buy-fish', async (req, res) => {
                 throw { status: 400, message: 'Invalid fish type' };
             }
            
-            const user = await User.findOne({ username }).session(session);
+            const user = await User.findOne(username).session(session);
             if (!user) {
                 throw { status: 404, message: 'User not found' };
             }
